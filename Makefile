@@ -36,8 +36,12 @@ unit:
 integration:
 	make dev
 	make deps
+	cp composer.json composer.json.back
+	cp composer.lock composer.lock.back
 	@docker exec -t $(shell docker-compose -p ${COMPONENT} -f ops/docker/docker-compose.yml ps -q ${CONTAINER}) \
 	 ${APP_ROOT}/ops/scripts/integration.sh
+	mv composer.lock.back composer.lock
+	mv composer.json.back composer.json
 
 test-all: unit integration
 

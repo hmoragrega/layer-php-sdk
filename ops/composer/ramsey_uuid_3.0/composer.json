@@ -1,0 +1,27 @@
+{
+    "name": "hmoragrega/layer-php-sdk",
+    "description": "SDK to ease using Layer HTTP API",
+    "keywords": ["layer", "php", "sdk", "messaging", "chat"],
+    "license": "Apache-2.0",
+    "type": "project",
+    "require": {
+        "php": ">=5.4",
+        "psr/log": "^1.0",
+        "guzzlehttp/psr7": "^1.3",
+        "ramsey/uuid": "^3.0"
+    },
+    "require-dev": {
+        "phpspec/phpspec": "^2.5",
+        "escapestudios/symfony2-coding-standard": "~2.0",
+        "coduo/phpspec-data-provider-extension": "^1.0"
+    },
+    "autoload": {
+        "psr-4": { 
+            "UglyGremlin\\Layer\\": "src/",
+            "spec\\UglyGremlin\\Layer\\": "spec/" 
+        }
+    },
+    "config": {
+        "bin-dir": "bin"
+    }
+}
