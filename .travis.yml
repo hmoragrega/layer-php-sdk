@@ -3,9 +3,9 @@ language: php
 matrix:
   include:
     - php: 5.4
-        env: 
-          - COMPOSER=.
-          - TESTS=ops/scripts/travis/unit.sh
+      env: 
+        - COMPOSER=.
+        - TESTS=ops/scripts/travis/unit.sh
     - php: 5.4
       env: 
         - COMPOSER=ops/composer/ramsey_uuid_1.0
