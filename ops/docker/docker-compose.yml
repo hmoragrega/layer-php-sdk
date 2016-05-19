@@ -1,0 +1,4 @@
+phpfarm:
+  image: splitbrain/phpfarm:jessie
+  volumes:
+    - ../../:/app/layer-php-sdk

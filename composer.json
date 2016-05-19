@@ -20,5 +20,8 @@
             "UglyGremlin\\Layer\\": "src/",
             "spec\\UglyGremlin\\Layer\\": "spec/" 
         }
+    },
+    "config": {
+        "bin-dir": "bin"
     }
 }
