@@ -45,11 +45,11 @@ class ResponseChecker
      * @var array
      */
     private static $errors = [
-        self::STATUS_BAD_REQUEST  => BadRequestException::class,
-        self::STATUS_UNAUTHORIZED => UnauthorizedException::class,
-        self::STATUS_NOT_FOUND    => NotFoundException::class,
-        self::STATUS_CONFLICT     => ConflictException::class,
-        self::STATUS_GONE         => GoneException::class,
+        self::STATUS_BAD_REQUEST  => '\UglyGremlin\Layer\Exception\BadRequestException',
+        self::STATUS_UNAUTHORIZED => '\UglyGremlin\Layer\Exception\BadRequestException',
+        self::STATUS_NOT_FOUND    => '\UglyGremlin\Layer\Exception\NotFoundException',
+        self::STATUS_CONFLICT     => '\UglyGremlin\Layer\Exception\ConflictException',
+        self::STATUS_GONE         => '\UglyGremlin\Layer\Exception\GoneException',
     ];
 
     /**
