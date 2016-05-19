@@ -34,7 +34,7 @@ class GuzzleAdapterFactory
         }
         
         if (class_exists('\GuzzleHttp\Client')) {
-            return self::buildGuzzleHttpAdapter();
+            return self::buildGuzzleHttpAdapter($options);
         }
 
         throw new RuntimeException("No suitable installation of a guzzle factory has been found");

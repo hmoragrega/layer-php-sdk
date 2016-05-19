@@ -93,7 +93,7 @@ class GuzzleHttpLegacyAdapter implements ClientInterface
         return new Response(
             $response->getStatusCode(),
             $response->getHeaders(),
-            (string) $response->getBody()
+            $response->getBody()->getSize() > 0 ? $response->getBody()->getContents() : null
         );
     }
 }

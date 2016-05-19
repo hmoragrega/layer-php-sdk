@@ -25,7 +25,7 @@ abstract class AbstractEntity extends \stdClass
      */
     public function __construct($source = null)
     {
-        if (is_array($source) || $source instanceof \Traversable) {
+        if (is_array($source) || $source instanceof \Traversable || $source instanceof \stdClass) {
             foreach ($source as $key => $value) {
                 $this->{$key} = $this->map($key, $value);
             }
