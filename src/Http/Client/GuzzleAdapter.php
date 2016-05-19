@@ -10,8 +10,7 @@
 namespace UglyGremlin\Layer\Http\Client;
 
 use Guzzle\Http\ClientInterface as GuzzleClient;
-use Guzzle\Http\Exception\ClientErrorResponseException;
-use Guzzle\Http\Exception\ServerErrorResponseException;
+use Guzzle\Http\Exception\BadResponseException;
 use Guzzle\Http\Message\Response as GuzzleResponse;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
@@ -45,34 +44,37 @@ class GuzzleAdapter implements ClientInterface
      */
     public function execute(RequestInterface $request)
     {
-        return $this->convertResponse($this->executeWithGuzzle($request));
-    }
-
-    /**
-     * Executes a HTTP request
-     *
-     * @param RequestInterface $request The request to execute
-     *
-     * @return GuzzleResponse
-     */
-    public function executeWithGuzzle(RequestInterface $request)
-    {
         try {
-            return $this->guzzle->createRequest(
+            $response = $this->guzzle->createRequest(
                 $request->getMethod(),
                 (string) $request->getUri(),
                 $request->getHeaders(),
                 (string) $request->getBody()
             )->send();
-        } catch (ClientErrorResponseException $exception) {
-            // 40x errors
-            return $exception->getResponse();
-        } catch (ServerErrorResponseException $exception) {
-            // 50x errors
-            return $exception->getResponse();
+
+            return $this->convertResponse($response);
+            
+        } catch (BadResponseException $exception) {
+            return $this->extractResponseFromException($request, $exception->getResponse());
+
         } catch (\Exception $exception) {
             throw new RequestException($request, $exception->getMessage(), 0, $exception);
         }
+    }
+
+    /**
+     * @param RequestInterface     $request
+     * @param BadResponseException $exception
+     *
+     * @return GuzzleResponse
+     */
+    private function extractResponseFromException(RequestInterface $request, BadResponseException $exception)
+    {
+        if (!$exception->getResponse() instanceof GuzzleResponse) {
+            throw new RequestException($request, $exception->getMessage(), 0, $exception);
+        }
+
+        return $this->convertResponse($exception->getResponse());
     }
 
     /**
@@ -86,7 +88,7 @@ class GuzzleAdapter implements ClientInterface
     {
         return new Response(
             $result->getStatusCode(),
-            $result->getHeaders(),
+            $result->getHeaders()->toArray(),
             $result->getBody()->getSize() > 0 ? $result->getBody(true) : null
         );
     }

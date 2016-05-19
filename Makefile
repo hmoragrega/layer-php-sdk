@@ -33,7 +33,7 @@ unit:
 	@docker exec -t $(shell docker-compose -p ${COMPONENT} -f ops/docker/docker-compose.yml ps -q ${CONTAINER}) \
 	 ${APP_ROOT}/ops/scripts/unit.sh
 
-integration
+integration:
 	make dev
 	make deps
 	@docker exec -t $(shell docker-compose -p ${COMPONENT} -f ops/docker/docker-compose.yml ps -q ${CONTAINER}) \
