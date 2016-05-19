@@ -4,8 +4,12 @@ matrix:
   include:
     - php: 5.4
       env: 
-        - UUID_GENERATOR='rhumsaa/uuid "^2.9"'
+        - UUID_GENERATOR='rhumsaa/uuid ^2.0'
         - HTTP_CLIENT='guzzle/guzzle'
+    - php: 5.4
+      env: 
+        - UUID_GENERATOR='ramsey/uuid'
+        - HTTP_CLIENT='guzzlehttp/guzzle'
 
 before_install:
   - composer selfupdate
