@@ -4,5 +4,4 @@ suites:
         psr4_prefix: UglyGremlin\Layer
 
 extensions:
-    - Akeneo\SkipExampleExtension
     - Coduo\PhpSpec\DataProvider\DataProviderExtension

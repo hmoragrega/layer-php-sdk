@@ -51,16 +51,16 @@ class GuzzleHttpLegacyAdapter implements ClientInterface
         try {
             $guzzleResponse = $this->guzzle->send($this->guzzle->createRequest(
                 $request->getMethod(),
-                $request->getUri(),
-                [
+                $request->getUri(), [
                     'headers' => $request->getHeaders(),
                     'json'    => $request->getBody(),
-                ]
-            ));
+            ]));
 
             return $this->convertResponse($guzzleResponse);
+
         } catch (GuzzleRequestException $exception) {
             return $this->convertResponse($this->extractResponseFromException($request, $exception));
+
         } catch (\Exception $exception) {
             throw new RequestException($request, $exception->getMessage(), 0, $exception);
         }

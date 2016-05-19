@@ -14,6 +14,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Message\RequestInterface as GuzzleRequest;
 use GuzzleHttp\Message\ResponseInterface as GuzzleResponse;
+use GuzzleHttp\Stream\StreamInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Psr\Http\Message\RequestInterface;
@@ -24,16 +25,17 @@ use UglyGremlin\Layer\Exception\RequestException;
  * Class GuzzleHttpAdapterSpec
  *
  * @package spec\UglyGremlin\Layer\Http\Client
- * @require GuzzleHttp\Client
- * @mixin \UglyGremlin\Layer\Http\Client\GuzzleHttpAdapter
+ * @mixin \UglyGremlin\Layer\Http\Client\GuzzleHttpLegacyAdapter
  */
 class GuzzleHttpLegacyAdapterSpec extends ObjectBehavior
 {
-    function let(Client $client, GuzzleResponse $guzzleResponse)
+    function let(Client $client, GuzzleResponse $guzzleResponse, StreamInterface $body)
     {
         $guzzleResponse->getStatusCode()->willReturn(200);
-        $guzzleResponse->getBody()->willReturn('foo');
         $guzzleResponse->getHeaders()->willReturn(['bar' => 'foo']);
+        $guzzleResponse->getBody()->willReturn($body);
+        $body->getSize()->willReturn(100);
+        $body->getContents()->willReturn('body');
 
         $this->beConstructedWith($client);
     }

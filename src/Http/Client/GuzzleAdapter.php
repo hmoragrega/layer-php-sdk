@@ -53,8 +53,10 @@ class GuzzleAdapter implements ClientInterface
             )->send();
 
             return $this->convertResponse($response);
+
         } catch (BadResponseException $exception) {
-            return $this->extractResponseFromException($request, $exception->getResponse());
+            return $this->extractResponseFromException($request, $exception);
+
         } catch (\Exception $exception) {
             throw new RequestException($request, $exception->getMessage(), 0, $exception);
         }
