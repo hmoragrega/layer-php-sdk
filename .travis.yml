@@ -16,8 +16,8 @@ before_install:
 
 install:
   - composer update
-  - composer require {$UUID_GENERATOR}
-  - composer require {$HTTP_CLIENT}
+  - composer require $UUID_GENERATOR
+  - composer require $HTTP_CLIENT
 
 script:
   - vendor/bin/phpspec run --format=pretty spec/
