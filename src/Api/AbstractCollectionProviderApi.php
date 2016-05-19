@@ -16,8 +16,6 @@ namespace UglyGremlin\Layer\Api;
  */
 abstract class AbstractCollectionProviderApi extends AbstractApi
 {
-    const COUNT_HEADER = 'layer-count';
-
     /**
      * Queries for a collection to the API
      *

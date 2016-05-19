@@ -9,12 +9,14 @@
 
 namespace UglyGremlin\Layer\Api;
 
+use GuzzleHttp\Psr7\Request;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use UglyGremlin\Layer\Exception\RequestException;
 use UglyGremlin\Layer\Exception\ResponseException;
 use UglyGremlin\Layer\Http\ClientInterface;
 use UglyGremlin\Layer\Log\Logger;
+use UglyGremlin\Layer\Uuid\UuidGeneratorInterface;
 
 /**
  * Class AbstractApi
@@ -25,6 +27,8 @@ use UglyGremlin\Layer\Log\Logger;
  */
 abstract class AbstractApi
 {
+    const API_BASE_URL = 'https://api.layer.com/';
+
     /**
      * The HTTP client to execute request.
      *
@@ -33,18 +37,21 @@ abstract class AbstractApi
     private $httpClient;
 
     /**
-     * The factory to build API request.
-     *
-     * @var RequestFactory
-     */
-    private $requestFactory;
-
-    /**
      * The object that validates the API response
      *
      * @var ResponseChecker
      */
     private $checker;
+
+    /**
+     * @var UuidGeneratorInterface
+     */
+    private $uuidGenerator;
+
+    /**
+     * @var Config
+     */
+    private $config;
 
     /**
      * It logs the requests and the responses.
@@ -56,31 +63,24 @@ abstract class AbstractApi
     /**
      * Client constructor.
      *
-     * @param ClientInterface $httpClient
-     * @param RequestFactory  $requestFactory
-     * @param ResponseChecker $checker
-     * @param Logger          $logger
+     * @param ClientInterface        $httpClient
+     * @param ResponseChecker        $checker
+     * @param UuidGeneratorInterface $uuidGenerator
+     * @param Config                 $config
+     * @param Logger                 $logger
      */
     public function __construct(
         ClientInterface $httpClient,
-        RequestFactory $requestFactory,
         ResponseChecker $checker,
+        UuidGeneratorInterface $uuidGenerator,
+        Config $config,
         Logger $logger
     ) {
         $this->httpClient     = $httpClient;
-        $this->requestFactory = $requestFactory;
         $this->checker        = $checker;
+        $this->uuidGenerator  = $uuidGenerator;
+        $this->config         = $config;
         $this->logger         = $logger;
-    }
-
-    /**
-     * Returns the request factory
-     *
-     * @return RequestFactory
-     */
-    protected function getRequestFactory()
-    {
-        return $this->requestFactory;
     }
 
     /**
@@ -117,7 +117,7 @@ abstract class AbstractApi
      */
     protected function get($path, array $params = [])
     {
-        $request  = $this->getRequestFactory()->get($path, $params);
+        $request  = $this->buildRequest('GET', $this->getApiUrl($path, $params), $this->getHeaders());
         $response = $this->execute($request);
 
         return [$request, $response];
@@ -131,7 +131,7 @@ abstract class AbstractApi
      */
     protected function post($path, $payload)
     {
-        $this->execute($this->requestFactory->post($path, $this->transformPayload($payload)));
+        $this->execute($this->buildRequest('POST', $this->getApiUrl($path), $this->getHeaders(), $payload));
     }
 
     /**
@@ -142,7 +142,7 @@ abstract class AbstractApi
      */
     protected function patch($path, $payload)
     {
-        $this->execute($this->requestFactory->patch($path, $this->transformPayload($payload)));
+        $this->execute($this->buildRequest('PATCH', $this->getApiUrl($path), $this->getPatchHeaders(), $payload));
     }
 
     /**
@@ -153,7 +153,7 @@ abstract class AbstractApi
      */
     protected function put($path, $payload)
     {
-        $this->execute($this->requestFactory->put($path, $this->transformPayload($payload)));
+        $this->execute($this->buildRequest('PUT', $this->getApiUrl($path), $this->getHeaders(), $payload));
     }
 
     /**
@@ -163,7 +163,7 @@ abstract class AbstractApi
      */
     protected function delete($path)
     {
-        $this->execute($this->requestFactory->delete($path));
+        $this->execute($this->buildRequest('DELETE', $this->getApiUrl($path), $this->getHeaders()));
     }
 
     /**
@@ -204,5 +204,69 @@ abstract class AbstractApi
         }
 
         return $payload;
+    }
+
+    /**
+     * Builds a request
+     *
+     * @param string $method  HTTP method for the request
+     * @param string $url     API endpoint URL
+     * @param array  $headers Headers
+     * @param mixed  $payload Message body
+     *
+     * @return Request
+     */
+    public function buildRequest($method, $url, array $headers = [], $payload = null)
+    {
+        return new Request($method, $url, $headers, $this->transformPayload($payload));
+    }
+
+    /**
+     * Builds the final API URL
+     *
+     * @param string $path
+     * @param array  $params
+     *
+     * @return string
+     */
+    private function getApiUrl($path, array $params = [])
+    {
+        $url = $this->config->getBaseUrl().'apps/'.$this->config->getAppId().'/'.$path;
+
+        if (count($params) > 0) {
+            $url .= '?'.http_build_query($params);
+        }
+
+        return $url;
+    }
+
+    /**
+     * Returns the headers to send on the requests
+     *
+     * @return array
+     */
+    private function getHeaders()
+    {
+        return [
+            'Accept'        => 'application/vnd.layer+json; version=1.1',
+            'Authorization' => 'Bearer '.$this->config->getAppToken(),
+            'Content-Type'  => 'application/json',
+            'User-Agent'    => 'UglyGremlin\'s Layer PHP SDK. 1.0.0',
+            'If-None-Match' => $this->uuidGenerator->getUniqueId(),
+        ];
+    }
+
+    /**
+     * Returns the headers to send on the PATCH requests
+     *
+     * @return array
+     */
+    private function getPatchHeaders()
+    {
+        $headers = $this->getHeaders();
+        $headers['Content-Type']           = 'application/vnd.layer-patch+json';
+        $headers['X-HTTP-Method-Override'] = 'PATCH';
+
+        return $headers;
     }
 }

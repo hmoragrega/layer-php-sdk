@@ -11,7 +11,8 @@ namespace UglyGremlin\Layer;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use UglyGremlin\Layer\Api\RequestFactory;
+use UglyGremlin\Layer\Api\AbstractApi;
+use UglyGremlin\Layer\Api\Config;
 use UglyGremlin\Layer\Api\ResponseChecker;
 use UglyGremlin\Layer\Exception\InvalidArgumentException;
 use UglyGremlin\Layer\Exception\RuntimeException;
@@ -87,9 +88,7 @@ class ClientBuilder
      */
     private function __construct($appId, $appToken, $baseUrl)
     {
-        $this->appId    = $appId;
-        $this->appToken = $appToken;
-        $this->baseUrl  = $baseUrl;
+        $this->config = new Config($appId, $appToken, $baseUrl);
     }
 
     /**
@@ -101,7 +100,7 @@ class ClientBuilder
      *
      * @return $this
      */
-    public static function client($appId, $appToken, $baseUrl = RequestFactory::API_BASE_URL)
+    public static function client($appId, $appToken, $baseUrl = AbstractApi::API_BASE_URL)
     {
         return new self($appId, $appToken, $baseUrl);
     }
@@ -121,11 +120,10 @@ class ClientBuilder
     {
         $this->buildMissingDependencies();
 
-        $requestFactory = new RequestFactory($this->uuidGenerator, $this->appId, $this->appToken, $this->baseUrl);
         $checker        = new ResponseChecker();
         $logger         = new Logger($this->logger);
 
-        return new Client($this->httpClient, $requestFactory, $checker, $logger);
+        return new Client($this->httpClient, $checker, $this->uuidGenerator, $this->config, $logger);
     }
 
     /**
