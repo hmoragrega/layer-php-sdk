@@ -46,4 +46,4 @@ install:
   - composer install
 
 script:
-  - sh $SCRIPT
+  - /bin/bash $TESTS
