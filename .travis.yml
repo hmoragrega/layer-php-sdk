@@ -39,8 +39,8 @@ before_install:
   - composer selfupdate
 
 install:
-  - mv $COMPOSER_PATH/composer.json ./composer.json
-  - mv $COMPOSER_PATH/composer.lock ./composer.lock
+  - cp -f $COMPOSER_PATH/composer.json ./composer.json
+  - cp -f $COMPOSER_PATH/composer.lock ./composer.lock
   - composer install
 
 script:
