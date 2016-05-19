@@ -2,16 +2,31 @@ language: php
 
 php:
   - '5.4'
+    env: UUID_GENERATOR='rhumsaa/uuid "^2.9"'
+    env: HTTP_CLIENT='guzzle/guzzle'
+  - '5.4'
+    env: UUID_GENERATOR='ramsey/uuid'
+    env: HTTP_CLIENT='guzzlehttp/guzzle'
   - '5.5'
+    env: UUID_GENERATOR='rhumsaa/uuid "^2.9"'
+    env: HTTP_CLIENT='guzzle/guzzle'
+  - '5.5'
+    env: UUID_GENERATOR='ramsey/uuid'
+    env: HTTP_CLIENT='guzzlehttp/guzzle'
   - '5.6'
-  - '7.0'
+    env: UUID_GENERATOR='rhumsaa/uuid "^2.9"'
+    env: HTTP_CLIENT='guzzle/guzzle'
+  - '5.5'
+    env: UUID_GENERATOR='ramsey/uuid'
+    env: HTTP_CLIENT='guzzlehttp/guzzle'
 
 before_install:
   - composer selfupdate
-  - echo $TRAVIS_PHP_VERSION
 
 install:
   - composer update
+  - composer require {$UUID_GENERATOR}
+  - composer require {$HTTP_CLIENT}
 
 script:
   - vendor/bin/phpspec run --format=pretty spec/
