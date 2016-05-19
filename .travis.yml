@@ -1,41 +1,39 @@
 language: php
 
-sudo: required
-
 matrix:
   include:
     - php: 5.4
         env: 
-          - COMPOSER='.'
-          - TESTS='ops/scripts/travis/unit.sh'
+          - COMPOSER=.
+          - TESTS=ops/scripts/travis/unit.sh
     - php: 5.4
       env: 
-        - COMPOSER='ops/composer/ramsey_uuid_1.0'
-        - TESTS='ops/scripts/travis/ramsey_uuid.sh'
+        - COMPOSER=ops/composer/ramsey_uuid_1.0
+        - TESTS=ops/scripts/travis/ramsey_uuid.sh
     - php: 5.4
       env: 
-        - COMPOSER='ops/composer/ramsey_uuid_2.0'
-        - TESTS='ops/scripts/travis/ramsey_uuid.sh'
+        - COMPOSER=ops/composer/ramsey_uuid_2.0
+        - TESTS=ops/scripts/travis/ramsey_uuid.sh
     - php: 5.4
       env: 
-        - COMPOSER='ops/composer/ramsey_uuid_3.0'
-        - TESTS='ops/scripts/travis/ramsey_uuid.sh'
+        - COMPOSER=ops/composer/ramsey_uuid_3.0
+        - TESTS=ops/scripts/travis/ramsey_uuid.sh
     - php: 5.5
       env: 
-        - COMPOSER='.'
-        - TESTS='ops/scripts/travis/unit.sh'
+        - COMPOSER=.
+        - TESTS=ops/scripts/travis/unit.sh
     - php: 5.5
       env: 
-        - COMPOSER='ops/composer/ramsey_uuid_1.0'
-        - TESTS='ops/scripts/travis/ramsey_uuid.sh'
+        - COMPOSER=ops/composer/ramsey_uuid_1.0
+        - TESTS=ops/scripts/travis/ramsey_uuid.sh
     - php: 5.6
       env: 
-        - COMPOSER='ops/composer/ramsey_uuid_2.0'
-        - TESTS='ops/scripts/travis/ramsey_uuid.sh'
+        - COMPOSER=ops/composer/ramsey_uuid_2.0
+        - TESTS=ops/scripts/travis/ramsey_uuid.sh
     - php: 5.7
       env: 
-        - COMPOSER='ops/composer/ramsey_uuid_3.0'
-        - TESTS='ops/scripts/travis/ramsey_uuid.sh'
+        - COMPOSER=ops/composer/ramsey_uuid_3.0
+        - TESTS=ops/scripts/travis/ramsey_uuid.sh
 
 before_install:
   - composer selfupdate
