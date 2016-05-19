@@ -126,7 +126,7 @@ class ResponseChecker
      */
     private function parseBodyResponse(RequestInterface $request, ResponseInterface $response)
     {
-        if (empty($response->getBody()->getSize())) {
+        if ((int) $response->getBody()->getSize() == 0) {
             throw new ParseException($request, $response, "The response body is empty");
         }
 
