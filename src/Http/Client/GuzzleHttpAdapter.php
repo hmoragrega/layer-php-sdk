@@ -48,7 +48,7 @@ class GuzzleHttpAdapter implements ClientInterface
         try {
             return $this->guzzle->request(
                 $request->getMethod(),
-                $request->getUrl(),
+                $request->getUri(),
                 [
                     'headers' => $request->getHeaders(),
                     'json'    => $request->getBody(),
