@@ -9,8 +9,8 @@
 
 namespace UglyGremlin\Layer\Uuid\Generator;
 
+use UglyGremlin\Layer\Exception\RuntimeException;
 use UglyGremlin\Layer\Uuid\UuidGeneratorInterface;
-use Ramsey\Uuid\Uuid;
 
 /**
  * Class RamseyUuidGenerator
@@ -19,6 +19,31 @@ use Ramsey\Uuid\Uuid;
  */
 class RamseyUuidGenerator implements UuidGeneratorInterface
 {
+    const RAMSEY  = 'Ramsey\Uuid\Uuid';
+    const RHUMSAA = 'Rhumsaa\Uuid\Uuid';
+    const METHOD  = 'uuid4';
+
+    /**
+     * Loaded class
+     * 
+     * @var string
+     */
+    private $class;
+
+    /**
+     * RamseyUuidGenerator constructor.
+     */
+    public function __construct()
+    {
+        if (class_exists(self::RAMSEY)) {
+            $this->class = self::RAMSEY;
+        } elseif(class_exists(self::RHUMSAA)) {
+            $this->class = self::RHUMSAA;
+        } else {
+            throw new RuntimeException("There is Ramsey valid class loaded");
+        }
+    }
+
     /**
      * Generates a unique id
      *
@@ -26,8 +51,6 @@ class RamseyUuidGenerator implements UuidGeneratorInterface
      */
     public function getUniqueId()
     {
-        $uuid4 = Uuid::uuid4();
-
-        return $uuid4->toString();
+        return call_user_func([$this->class, self::METHOD])->toString();
     }
 }

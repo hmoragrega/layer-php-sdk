@@ -33,6 +33,14 @@ unit:
 	@docker exec -t $(shell docker-compose -p ${COMPONENT} -f ops/docker/docker-compose.yml ps -q ${CONTAINER}) \
 	 ${APP_ROOT}/ops/scripts/unit.sh
 
+integration
+	make dev
+	make deps
+	@docker exec -t $(shell docker-compose -p ${COMPONENT} -f ops/docker/docker-compose.yml ps -q ${CONTAINER}) \
+	 ${APP_ROOT}/ops/scripts/integration.sh
+
+test-all: unit integration
+
 ps: status
 status:
 	@docker-compose -p ${COMPONENT} -f ops/docker/docker-compose.yml ps

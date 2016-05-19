@@ -46,7 +46,7 @@ class GuzzleHttpAdapter implements ClientInterface
     public function execute(RequestInterface $request)
     {
         try {
-            return $this->guzzle->request(
+            return $this->guzzle->execute(
                 $request->getMethod(),
                 $request->getUri(),
                 [

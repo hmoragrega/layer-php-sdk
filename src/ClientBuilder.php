@@ -9,21 +9,16 @@
 
 namespace UglyGremlin\Layer;
 
-use Guzzle\Http\Client as GuzzleClient;
-use GuzzleHttp\Client as GuzzleHttpClient;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use UglyGremlin\Layer\Api\RequestFactory;
 use UglyGremlin\Layer\Api\ResponseChecker;
 use UglyGremlin\Layer\Exception\InvalidArgumentException;
 use UglyGremlin\Layer\Exception\RuntimeException;
-use UglyGremlin\Layer\Http\Client\GuzzleAdapter;
-use UglyGremlin\Layer\Http\Client\GuzzleHttp;
-use UglyGremlin\Layer\Http\Client\GuzzleHttpAdapter;
+use UglyGremlin\Layer\Http\Client\GuzzleAdapterFactory;
 use UglyGremlin\Layer\Http\ClientInterface;
 use UglyGremlin\Layer\Log\Logger;
 use UglyGremlin\Layer\Uuid\Generator\RamseyUuidGenerator;
-use UglyGremlin\Layer\Uuid\Generator\RhumsaaUuidGenerator;
 use UglyGremlin\Layer\Uuid\UuidGeneratorInterface;
 
 /**
@@ -51,14 +46,14 @@ class ClientBuilder
     /**
      * Request execution timeout in seconds
      *
-     * @var ClientInterface|string|null
+     * @var ClientInterface
      */
     private $httpClient;
 
     /**
      * Request execution timeout in seconds
      *
-     * @var UuidGeneratorInterface|string|null
+     * @var UuidGeneratorInterface
      */
     private $uuidGenerator;
 
@@ -150,11 +145,11 @@ class ClientBuilder
     /**
      * Sets the request connection timeout in seconds
      *
-     * @param string|ClientInterface $httpClient The HTTP client
+     * @param ClientInterface $httpClient The HTTP client
      *
      * @return $this
      */
-    public function withHttpClient($httpClient)
+    public function withHttpClient(ClientInterface $httpClient)
     {
         $this->httpClient = $httpClient;
 
@@ -164,11 +159,11 @@ class ClientBuilder
     /**
      * Sets the request connection timeout in seconds
      *
-     * @param string|UuidGeneratorInterface $uuidGenerator The UUID generator
+     * @param UuidGeneratorInterface $uuidGenerator The UUID generator
      *
      * @return $this
      */
-    public function withUuidGenerator($uuidGenerator)
+    public function withUuidGenerator(UuidGeneratorInterface $uuidGenerator)
     {
         $this->uuidGenerator = $uuidGenerator;
 
@@ -209,77 +204,15 @@ class ClientBuilder
     private function buildMissingDependencies()
     {
         if (!$this->httpClient instanceof ClientInterface) {
-            $this->httpClient = $this->buildHttpClient($this->httpClient);
+            $this->httpClient = GuzzleAdapterFactory::build($this->getGuzzleOptions());
         }
 
         if (!$this->uuidGenerator instanceof UuidGeneratorInterface) {
-            $this->uuidGenerator = $this->buildUuidGenerator($this->uuidGenerator);
+            $this->uuidGenerator = new RamseyUuidGenerator();
         }
 
         if (!$this->logger instanceof LoggerInterface) {
             $this->logger = new NullLogger();
-        }
-    }
-
-    /**
-     * Builds one of the built-in HTTP clients
-     *
-     * @param string $httpClient
-     *
-     * @return ClientInterface
-     * @throws InvalidArgumentException
-     */
-    private function buildHttpClient($httpClient)
-    {
-        switch ($httpClient) {
-            case 'guzzle':
-                $this->verifyClassIsLoaded('Guzzle\Http\Client');
-
-                return new GuzzleAdapter(new GuzzleClient('', $this->getGuzzleOptions()));
-
-            case 'guzzle-http':
-                $this->verifyClassIsLoaded('GuzzleHttp\Client');
-
-                return new GuzzleHttpAdapter(new GuzzleHttpClient($this->getGuzzleOptions()));
-        }
-
-        throw new InvalidArgumentException('HTTP client is not valid. Built-in options are: guzzle and guzzle-http');
-    }
-
-    /**
-     * Builds one of the built-in HTTP clients
-     *
-     * @param string $uuidGenerator
-     *
-     * @return UuidGeneratorInterface
-     * @throws InvalidArgumentException
-     */
-    private function buildUuidGenerator($uuidGenerator)
-    {
-        switch ($uuidGenerator) {
-            case 'ramsey':
-                $this->verifyClassIsLoaded('Ramsey\Uuid\Uuid');
-
-                return new RamseyUuidGenerator();
-
-            case 'rhumsaa':
-                $this->verifyClassIsLoaded('Rhumsaa\Uuid\Uuid');
-
-                return new RhumsaaUuidGenerator();
-        }
-
-        throw new InvalidArgumentException('Uuid generator is not valid. Built-in options are: ramsey and rhumsaa');
-    }
-
-    /**
-     * Verifies that the requested class is loaded before constructing it
-     *
-     * @param string $class
-     */
-    private function verifyClassIsLoaded($class)
-    {
-        if (!class_exists($class)) {
-            throw new RuntimeException("The required class $class is not loaded");
         }
     }
 
