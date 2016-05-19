@@ -1,23 +1,49 @@
 language: php
 
+sudo: required
+
 matrix:
   include:
     - php: 5.4
-      env: 
-        - UUID_GENERATOR='rhumsaa/uuid ^2.0'
-        - HTTP_CLIENT='guzzle/guzzle ^3.0'
+        env: 
+          - COMPOSER='.'
+          - TESTS='ops/scripts/travis/unit.sh'
     - php: 5.4
-      env:
-        - UUID_GENERATOR='ramsey/uuid ^3.0'
-        - HTTP_CLIENT='guzzlehttp/guzzle ^5.0'
+      env: 
+        - COMPOSER='ops/composer/ramsey_uuid_1.0'
+        - TESTS='ops/scripts/travis/ramsey_uuid.sh'
+    - php: 5.4
+      env: 
+        - COMPOSER='ops/composer/ramsey_uuid_2.0'
+        - TESTS='ops/scripts/travis/ramsey_uuid.sh'
+    - php: 5.4
+      env: 
+        - COMPOSER='ops/composer/ramsey_uuid_3.0'
+        - TESTS='ops/scripts/travis/ramsey_uuid.sh'
+    - php: 5.5
+      env: 
+        - COMPOSER='.'
+        - TESTS='ops/scripts/travis/unit.sh'
+    - php: 5.5
+      env: 
+        - COMPOSER='ops/composer/ramsey_uuid_1.0'
+        - TESTS='ops/scripts/travis/ramsey_uuid.sh'
+    - php: 5.6
+      env: 
+        - COMPOSER='ops/composer/ramsey_uuid_2.0'
+        - TESTS='ops/scripts/travis/ramsey_uuid.sh'
+    - php: 5.7
+      env: 
+        - COMPOSER='ops/composer/ramsey_uuid_3.0'
+        - TESTS='ops/scripts/travis/ramsey_uuid.sh'
 
 before_install:
   - composer selfupdate
 
 install:
-  - composer update
-  - composer require $UUID_GENERATOR
-  - composer require $HTTP_CLIENT
+  - cp $COMPOSER/composer.json ./composer.json
+  - cp $COMPOSER/composer.lock ./composer.lock
+  - composer install
 
 script:
-  - vendor/bin/phpspec run --format=pretty spec/
+  - sh $SCRIPT
