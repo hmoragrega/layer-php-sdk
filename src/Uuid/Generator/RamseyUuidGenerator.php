@@ -25,7 +25,7 @@ class RamseyUuidGenerator implements UuidGeneratorInterface
 
     /**
      * Loaded class
-     * 
+     *
      * @var string
      */
     private $class;
@@ -37,7 +37,7 @@ class RamseyUuidGenerator implements UuidGeneratorInterface
     {
         if (class_exists(self::RAMSEY)) {
             $this->class = self::RAMSEY;
-        } elseif(class_exists(self::RHUMSAA)) {
+        } elseif (class_exists(self::RHUMSAA)) {
             $this->class = self::RHUMSAA;
         } else {
             throw new RuntimeException("There is no valid Ramsey or Rhumsaa package installed");

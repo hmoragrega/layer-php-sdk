@@ -59,10 +59,8 @@ class GuzzleHttpLegacyAdapter implements ClientInterface
             ));
 
             return $this->convertResponse($guzzleResponse);
-
         } catch (GuzzleRequestException $exception) {
             return $this->convertResponse($this->extractResponseFromException($request, $exception));
-
         } catch (\Exception $exception) {
             throw new RequestException($request, $exception->getMessage(), 0, $exception);
         }

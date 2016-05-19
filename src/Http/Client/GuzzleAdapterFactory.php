@@ -22,7 +22,7 @@ class GuzzleAdapterFactory
 {
     /**
      * Builds a guzzle adapter depending on the installed library and version
-     * 
+     *
      * @param array $options
      *
      * @return GuzzleAdapter|GuzzleHttpAdapter|GuzzleHttpLegacyAdapter
@@ -41,8 +41,8 @@ class GuzzleAdapterFactory
     }
 
     /**
-     * Builds a guzzle adapter suitable for the installed GuzzleHttp library 
-     * 
+     * Builds a guzzle adapter suitable for the installed GuzzleHttp library
+     *
      * @param array $options
      *
      * @return GuzzleHttpAdapter|GuzzleHttpLegacyAdapter
