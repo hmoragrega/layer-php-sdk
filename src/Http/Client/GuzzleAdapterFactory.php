@@ -54,7 +54,7 @@ class GuzzleAdapterFactory
             return new GuzzleHttpLegacyAdapter($client);
         }
 
-        if (method_exists($client, 'execute')) {
+        if (method_exists($client, 'request')) {
             return new GuzzleHttpAdapter($client);
         }
 
