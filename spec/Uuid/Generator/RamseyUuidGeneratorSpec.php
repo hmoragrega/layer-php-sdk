@@ -21,7 +21,7 @@ class RamseyUuidGeneratorSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType('UglyGremlin\Layer\Uuid\Generator\RamseyUniqueIdGenerator');
+        $this->shouldHaveType('UglyGremlin\Layer\Uuid\Generator\RamseyUuidGenerator');
         $this->shouldImplement('UglyGremlin\Layer\Uuid\UuidGeneratorInterface');
     }
 
