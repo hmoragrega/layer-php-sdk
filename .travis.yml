@@ -4,43 +4,41 @@ matrix:
   include:
     - php: 5.4
       env: 
-        - COMPOSER=.
+        - COMPOSER=composer.json
         - TESTS=ops/scripts/travis/unit.sh
     - php: 5.4
       env: 
-        - COMPOSER=ops/composer/ramsey_uuid_1.0
+        - COMPOSER=ops/composer/ramsey_uuid_1.0/composer.json
         - TESTS=ops/scripts/travis/ramsey_uuid.sh
     - php: 5.4
       env: 
-        - COMPOSER=ops/composer/ramsey_uuid_2.0
+        - COMPOSER=ops/composer/ramsey_uuid_2.0/composer.json
         - TESTS=ops/scripts/travis/ramsey_uuid.sh
     - php: 5.4
       env: 
-        - COMPOSER=ops/composer/ramsey_uuid_3.0
+        - COMPOSER=ops/composer/ramsey_uuid_3.0/composer.json
         - TESTS=ops/scripts/travis/ramsey_uuid.sh
     - php: 5.5
       env: 
-        - COMPOSER=.
+        - COMPOSER=composer.json
         - TESTS=ops/scripts/travis/unit.sh
     - php: 5.5
       env: 
-        - COMPOSER=ops/composer/ramsey_uuid_1.0
+        - COMPOSER=ops/composer/ramsey_uuid_1.0/composer.json
         - TESTS=ops/scripts/travis/ramsey_uuid.sh
     - php: 5.6
       env: 
-        - COMPOSER=ops/composer/ramsey_uuid_2.0
+        - COMPOSER=ops/composer/ramsey_uuid_2.0/composer.json
         - TESTS=ops/scripts/travis/ramsey_uuid.sh
     - php: 5.7
       env: 
-        - COMPOSER=ops/composer/ramsey_uuid_3.0
+        - COMPOSER=ops/composer/ramsey_uuid_3.0/composer.json
         - TESTS=ops/scripts/travis/ramsey_uuid.sh
 
 before_install:
   - composer selfupdate
 
 install:
-  - cp $COMPOSER/composer.json ./composer.json
-  - cp $COMPOSER/composer.lock ./composer.lock
   - composer install
 
 script:
