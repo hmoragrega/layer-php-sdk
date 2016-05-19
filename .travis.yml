@@ -6,34 +6,98 @@ matrix:
       env:
         - COMPOSER_PATH=ops/composer/vanilla
         - TESTS=ops/scripts/travis/unit.sh
-#    - php: 5.4
-#      env:
-#        - COMPOSER_PATH=ops/composer/ramsey_uuid_1.0
-#        - TESTS=ops/scripts/travis/ramsey_uuid.sh
-#    - php: 5.4
-#      env:
-#        - COMPOSER_PATH=ops/composer/ramsey_uuid_2.0
-#        - TESTS=ops/scripts/travis/ramsey_uuid.sh
-#    - php: 5.4
-#      env:
-#        - COMPOSER_PATH=ops/composer/ramsey_uuid_3.0
-#        - TESTS=ops/scripts/travis/ramsey_uuid.sh
+    - php: 5.4
+      env:
+        - COMPOSER_PATH=ops/composer/ramsey_uuid_1.0
+        - TESTS=ops/scripts/travis/ramsey_uuid.sh
+    - php: 5.4
+      env:
+        - COMPOSER_PATH=ops/composer/ramsey_uuid_2.0
+        - TESTS=ops/scripts/travis/ramsey_uuid.sh
+    - php: 5.4
+      env:
+        - COMPOSER_PATH=ops/composer/ramsey_uuid_3.0
+        - TESTS=ops/scripts/travis/ramsey_uuid.sh
+    - php: 5.4
+      env:
+        - COMPOSER_PATH=ops/composer/guzzlehttp_guzzle_4.0
+        - TESTS=ops/scripts/travis/guzzlehttp_guzzle_legacy.sh
+    - php: 5.4
+      env:
+        - COMPOSER_PATH=ops/composer/guzzlehttp_guzzle_5.0
+        - TESTS=ops/scripts/travis/guzzlehttp_guzzle_legacy.sh
+    - php: 5.4
+      env:
+        - COMPOSER_PATH=ops/composer/guzzlehttp_guzzle_6.0
+        - TESTS=ops/scripts/travis/guzzlehttp_guzzle.sh
+    - php: 5.4
+      env:
+        - COMPOSER_PATH=ops/composer/guzzle_guzzle_3.0
+        - TESTS=ops/scripts/travis/guzzle_guzzle.sh
     - php: 5.5
       env:
         - COMPOSER_PATH=ops/composer/vanilla
         - TESTS=ops/scripts/travis/unit.sh
-#    - php: 5.5
-#      env:
-#        - COMPOSER_PATH=ops/composer/ramsey_uuid_1.0
-#        - TESTS=ops/scripts/travis/ramsey_uuid.sh
-#    - php: 5.5
-#      env:
-#        - COMPOSER_PATH=ops/composer/ramsey_uuid_2.0
-#        - TESTS=ops/scripts/travis/ramsey_uuid.sh
-#    - php: 5.5
-#      env:
-#        - COMPOSER_PATH=ops/composer/ramsey_uuid_3.0
-#        - TESTS=ops/scripts/travis/ramsey_uuid.sh
+    - php: 5.5
+      env:
+        - COMPOSER_PATH=ops/composer/ramsey_uuid_1.0
+        - TESTS=ops/scripts/travis/ramsey_uuid.sh
+    - php: 5.5
+      env:
+        - COMPOSER_PATH=ops/composer/ramsey_uuid_2.0
+        - TESTS=ops/scripts/travis/ramsey_uuid.sh
+    - php: 5.5
+      env:
+        - COMPOSER_PATH=ops/composer/ramsey_uuid_3.0
+        - TESTS=ops/scripts/travis/ramsey_uuid.sh
+    - php: 5.5
+      env:
+        - COMPOSER_PATH=ops/composer/guzzlehttp_guzzle_4.0
+        - TESTS=ops/scripts/travis/guzzlehttp_guzzle_legacy.sh
+    - php: 5.5
+      env:
+        - COMPOSER_PATH=ops/composer/guzzlehttp_guzzle_5.0
+        - TESTS=ops/scripts/travis/guzzlehttp_guzzle_legacy.sh
+    - php: 5.5
+      env:
+        - COMPOSER_PATH=ops/composer/guzzlehttp_guzzle_6.0
+        - TESTS=ops/scripts/travis/guzzlehttp_guzzle.sh
+    - php: 5.5
+      env:
+        - COMPOSER_PATH=ops/composer/guzzle_guzzle_3.0
+        - TESTS=ops/scripts/travis/guzzle_guzzle.sh
+    - php: 5.6
+      env:
+        - COMPOSER_PATH=ops/composer/vanilla
+        - TESTS=ops/scripts/travis/unit.sh
+    - php: 5.6
+      env:
+        - COMPOSER_PATH=ops/composer/ramsey_uuid_1.0
+        - TESTS=ops/scripts/travis/ramsey_uuid.sh
+    - php: 5.6
+      env:
+        - COMPOSER_PATH=ops/composer/ramsey_uuid_2.0
+        - TESTS=ops/scripts/travis/ramsey_uuid.sh
+    - php: 5.6
+      env:
+        - COMPOSER_PATH=ops/composer/ramsey_uuid_3.0
+        - TESTS=ops/scripts/travis/ramsey_uuid.sh
+    - php: 5.6
+      env:
+        - COMPOSER_PATH=ops/composer/guzzlehttp_guzzle_4.0
+        - TESTS=ops/scripts/travis/guzzlehttp_guzzle_legacy.sh
+    - php: 5.6
+      env:
+        - COMPOSER_PATH=ops/composer/guzzlehttp_guzzle_5.0
+        - TESTS=ops/scripts/travis/guzzlehttp_guzzle_legacy.sh
+    - php: 5.6
+      env:
+        - COMPOSER_PATH=ops/composer/guzzlehttp_guzzle_6.0
+        - TESTS=ops/scripts/travis/guzzlehttp_guzzle.sh
+    - php: 5.6
+      env:
+        - COMPOSER_PATH=ops/composer/guzzle_guzzle_3.0
+        - TESTS=ops/scripts/travis/guzzle_guzzle.sh
 
 before_install:
   - composer selfupdate
