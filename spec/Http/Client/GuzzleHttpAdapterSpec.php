@@ -15,7 +15,6 @@ use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
-use GuzzleHttp\Psr7\Response;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Psr\Http\Message\RequestInterface;
@@ -26,6 +25,7 @@ use UglyGremlin\Layer\Exception\RequestException;
  * Class GuzzleHttpAdapterSpec
  *
  * @package spec\UglyGremlin\Layer\Http\Client
+ * @require GuzzleHttp\Client
  * @mixin \UglyGremlin\Layer\Http\Client\GuzzleHttpAdapter
  */
 class GuzzleHttpAdapterSpec extends ObjectBehavior

@@ -15,6 +15,7 @@ use PhpSpec\ObjectBehavior;
  * Class RhumsaaUuidGeneratorSpec
  *
  * @package spec\UglyGremlin\Layer\UniqueId
+ * @require Rhumsaa\Uuid\Uuid
  * @mixin \UglyGremlin\Layer\Uuid\Generator\RhumsaaUuidGenerator
  */
 class RhumsaaUuidGeneratorSpec extends ObjectBehavior

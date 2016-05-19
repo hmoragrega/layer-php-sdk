@@ -11,13 +11,8 @@
     },
     "require-dev": {
         "phpspec/phpspec": "^2.5",
-        "ramsey/uuid": "^2.9",
-        "guzzle/guzzle": "^3.9",
-        "guzzlehttp/guzzle": "^6.2",
-        "monolog/monolog": "^1.19",
         "akeneo/phpspec-skip-example-extension": "^1.2",
         "escapestudios/symfony2-coding-standard": "~2.0",
-        "pdepend/pdepend" : "2.2.4",
         "coduo/phpspec-data-provider-extension": "^1.0"
     },
     "autoload": {
