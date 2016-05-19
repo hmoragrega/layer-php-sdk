@@ -4,7 +4,7 @@ matrix:
   include:
     - php: 5.4
       env:
-        - COMPOSER_PATH=.
+        - COMPOSER_PATH=ops/composer/vanilla
         - TESTS=ops/scripts/travis/unit.sh
 #    - php: 5.4
 #      env:
@@ -20,7 +20,7 @@ matrix:
 #        - TESTS=ops/scripts/travis/ramsey_uuid.sh
     - php: 5.5
       env:
-        - COMPOSER_PATH=.
+        - COMPOSER_PATH=ops/composer/vanilla
         - TESTS=ops/scripts/travis/unit.sh
 #    - php: 5.5
 #      env:
@@ -39,6 +39,8 @@ before_install:
   - composer selfupdate
 
 install:
+  - mv ./composer.json ./composer.json.back 
+  - mv ./composer.lock ./composer.lock.back 
   - cp -f $COMPOSER_PATH/composer.json ./composer.json
   - cp -f $COMPOSER_PATH/composer.lock ./composer.lock
   - composer install
