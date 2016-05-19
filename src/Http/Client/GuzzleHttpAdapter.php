@@ -26,7 +26,7 @@ class GuzzleHttpAdapter implements ClientInterface
     /**
      * The Guzzle HTTP client
      *
-     * @var GuzzleClient
+     * @var Client
      */
     private $guzzle;
 

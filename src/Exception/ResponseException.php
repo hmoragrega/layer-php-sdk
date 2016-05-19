@@ -22,7 +22,7 @@ class ResponseException extends RequestException implements ExceptionInterface
     /**
      * API response
      *
-     * @var Response
+     * @var ResponseInterface
      */
     private $response;
 

@@ -110,8 +110,8 @@ abstract class AbstractApi
     /**
      * Executes a GET method
      *
-     * @param $path
-     * @param array $params
+     * @param string $path
+     * @param array  $params
      *
      * @return array
      */

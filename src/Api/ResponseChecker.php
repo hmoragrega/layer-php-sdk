@@ -58,7 +58,7 @@ class ResponseChecker
      * @param RequestInterface  $request
      * @param ResponseInterface $response
      *
-     * @return Response
+     * @return ResponseInterface
      */
     public function validate(RequestInterface $request, ResponseInterface $response)
     {
@@ -69,7 +69,7 @@ class ResponseChecker
         }
 
         if (isset(self::$exceptions[$statusCode])) {
-            $error     = $this->parseEntity($request);
+            $error     = $this->parseEntity($request, $response);
             $exception = self::$errors[$statusCode];
             throw new $exception($request, $response, $error->message, $error->code);
         }

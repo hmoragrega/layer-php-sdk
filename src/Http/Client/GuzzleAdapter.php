@@ -86,7 +86,7 @@ class GuzzleAdapter implements ClientInterface
     {
         return new Response(
             $result->getStatusCode(),
-            $result->getHeaders()->toArray(),
+            $result->getHeaders(),
             $result->getBody()->getSize() > 0 ? $result->getBody(true) : null
         );
     }

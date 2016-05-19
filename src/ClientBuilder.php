@@ -17,7 +17,6 @@ use UglyGremlin\Layer\Api\RequestFactory;
 use UglyGremlin\Layer\Api\ResponseChecker;
 use UglyGremlin\Layer\Exception\InvalidArgumentException;
 use UglyGremlin\Layer\Exception\RuntimeException;
-use UglyGremlin\Layer\Http\Client\CurlAdapter;
 use UglyGremlin\Layer\Http\Client\GuzzleAdapter;
 use UglyGremlin\Layer\Http\Client\GuzzleHttp;
 use UglyGremlin\Layer\Http\Client\GuzzleHttpAdapter;
@@ -47,7 +46,7 @@ class ClientBuilder
     /**
      * @var string
      */
-    private $endpoint;
+    private $baseUrl;
 
     /**
      * Request execution timeout in seconds
