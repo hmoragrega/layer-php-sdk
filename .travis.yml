@@ -5,11 +5,11 @@ matrix:
     - php: 5.4
       env: 
         - UUID_GENERATOR='rhumsaa/uuid ^2.0'
-        - HTTP_CLIENT='guzzle/guzzle'
+        - HTTP_CLIENT='guzzle/guzzle ^3.0'
     - php: 5.4
-      env: 
-        - UUID_GENERATOR='ramsey/uuid'
-        - HTTP_CLIENT='guzzlehttp/guzzle'
+      env:
+        - UUID_GENERATOR='ramsey/uuid ^3.0'
+        - HTTP_CLIENT='guzzlehttp/guzzle ^6.0'
 
 before_install:
   - composer selfupdate
