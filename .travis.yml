@@ -1,24 +1,11 @@
 language: php
 
-php:
-  - '5.4'
-    env: UUID_GENERATOR='rhumsaa/uuid "^2.9"'
-    env: HTTP_CLIENT='guzzle/guzzle'
-  - '5.4'
-    env: UUID_GENERATOR='ramsey/uuid'
-    env: HTTP_CLIENT='guzzlehttp/guzzle'
-  - '5.5'
-    env: UUID_GENERATOR='rhumsaa/uuid "^2.9"'
-    env: HTTP_CLIENT='guzzle/guzzle'
-  - '5.5'
-    env: UUID_GENERATOR='ramsey/uuid'
-    env: HTTP_CLIENT='guzzlehttp/guzzle'
-  - '5.6'
-    env: UUID_GENERATOR='rhumsaa/uuid "^2.9"'
-    env: HTTP_CLIENT='guzzle/guzzle'
-  - '5.5'
-    env: UUID_GENERATOR='ramsey/uuid'
-    env: HTTP_CLIENT='guzzlehttp/guzzle'
+matrix:
+  include:
+    - php: 5.4
+      env: 
+        - UUID_GENERATOR='rhumsaa/uuid "^2.9"'
+        - HTTP_CLIENT='guzzle/guzzle'
 
 before_install:
   - composer selfupdate
