@@ -10,7 +10,7 @@ before_install:
   - composer selfupdate
 
 install:
-  composer install
+  - composer update
 
 script:
-  - bin/phpspec run --format=pretty
+  - vendor/bin/phpspec run --format=pretty spec/
