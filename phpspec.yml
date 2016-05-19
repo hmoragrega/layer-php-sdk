@@ -1,0 +1,7 @@
+suites:
+    layer_suite:
+        namespace: UglyGremlin\Layer
+        psr4_prefix: UglyGremlin\Layer
+
+extensions:
+    - Akeneo\SkipExampleExtension
