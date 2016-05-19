@@ -28,10 +28,6 @@ matrix:
         - TESTS=ops/scripts/travis/guzzlehttp_guzzle_legacy.sh
     - php: 5.4
       env:
-        - COMPOSER_PATH=ops/composer/guzzlehttp_guzzle_6.0
-        - TESTS=ops/scripts/travis/guzzlehttp_guzzle.sh
-    - php: 5.4
-      env:
         - COMPOSER_PATH=ops/composer/guzzle_guzzle_3.0
         - TESTS=ops/scripts/travis/guzzle_guzzle.sh
     - php: 5.5
