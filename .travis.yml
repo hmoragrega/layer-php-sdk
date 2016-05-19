@@ -3,35 +3,35 @@ language: php
 matrix:
   include:
     - php: 5.4
-      env: 
+      env:
         - COMPOSER_PATH=.
         - TESTS=ops/scripts/travis/unit.sh
     - php: 5.4
-      env: 
+      env:
         - COMPOSER_PATH=ops/composer/ramsey_uuid_1.0
         - TESTS=ops/scripts/travis/ramsey_uuid.sh
     - php: 5.4
-      env: 
+      env:
         - COMPOSER_PATH=ops/composer/ramsey_uuid_2.0
         - TESTS=ops/scripts/travis/ramsey_uuid.sh
     - php: 5.4
-      env: 
+      env:
         - COMPOSER_PATH=ops/composer/ramsey_uuid_3.0
         - TESTS=ops/scripts/travis/ramsey_uuid.sh
     - php: 5.5
-      env: 
+      env:
         - COMPOSER_PATH=.
         - TESTS=ops/scripts/travis/unit.sh
     - php: 5.5
-      env: 
+      env:
         - COMPOSER_PATH=ops/composer/ramsey_uuid_1.0
         - TESTS=ops/scripts/travis/ramsey_uuid.sh
     - php: 5.5
-      env: 
+      env:
         - COMPOSER_PATH=ops/composer/ramsey_uuid_2.0
         - TESTS=ops/scripts/travis/ramsey_uuid.sh
     - php: 5.5
-      env: 
+      env:
         - COMPOSER_PATH=ops/composer/ramsey_uuid_3.0
         - TESTS=ops/scripts/travis/ramsey_uuid.sh
 
