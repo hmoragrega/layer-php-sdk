@@ -10,9 +10,7 @@
 namespace UglyGremlin\Layer\Http\Client;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException as GuzzleRequestException;
-use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Message\ResponseInterface as GuzzleResponse;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
@@ -51,16 +49,16 @@ class GuzzleHttpLegacyAdapter implements ClientInterface
         try {
             $guzzleResponse = $this->guzzle->send($this->guzzle->createRequest(
                 $request->getMethod(),
-                $request->getUri(), [
+                $request->getUri(),
+                [
                     'headers' => $request->getHeaders(),
                     'json'    => $request->getBody(),
-            ]));
+                ]
+            ));
 
-            return $this->convertResponse($guzzleResponse);
-
+                return $this->convertResponse($guzzleResponse);
         } catch (GuzzleRequestException $exception) {
             return $this->convertResponse($this->extractResponseFromException($request, $exception));
-
         } catch (\Exception $exception) {
             throw new RequestException($request, $exception->getMessage(), 0, $exception);
         }

@@ -11,16 +11,11 @@ namespace UglyGremlin\Layer\Api;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use UglyGremlin\Layer\Exception\BadRequestException;
-use UglyGremlin\Layer\Exception\ConflictException;
-use UglyGremlin\Layer\Exception\GoneException;
-use UglyGremlin\Layer\Exception\NotFoundException;
 use UglyGremlin\Layer\Exception\ParseException;
 use UglyGremlin\Layer\Exception\ResponseException;
-use UglyGremlin\Layer\Exception\UnauthorizedException;
 
 /**
- * Class ExceptionFactory
+ * Class ResponseChecker
  *
  * It can create exceptions based on the response status code
  *

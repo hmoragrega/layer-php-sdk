@@ -2,6 +2,7 @@
 
 # Layer PHP SDK
 
+[![Build Status](https://travis-ci.org/hmoragrega/layer-php-sdk.svg?branch=master)](https://travis-ci.org/hmoragrega/layer-php-sdk)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/4aa58def-cfd9-4a0c-9d5a-2ee57ec25b42/mini.png)](https://insight.sensiolabs.com/projects/4aa58def-cfd9-4a0c-9d5a-2ee57ec25b42)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/hmoragrega/layer-php-sdk/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/hmoragrega/layer-php-sdk/?branch=master)
 [![Build Status](https://scrutinizer-ci.com/g/hmoragrega/layer-php-sdk/badges/build.png?b=master)](https://scrutinizer-ci.com/g/hmoragrega/layer-php-sdk/build-status/master)

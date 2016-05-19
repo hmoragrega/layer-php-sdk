@@ -9,10 +9,8 @@
 
 namespace UglyGremlin\Layer\Api;
 
-use UglyGremlin\Layer\Http\Response;
-
 /**
- * Class CollectionProviderApi
+ * Class AbstractCollectionProviderApi
  *
  * @package UglyGremlin\Layer\Api
  */

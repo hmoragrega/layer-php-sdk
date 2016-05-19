@@ -32,7 +32,7 @@ class GuzzleAdapterFactory
         if (class_exists('\Guzzle\Http\Client')) {
             return new GuzzleAdapter(new GuzzleClient('', $options));
         }
-        
+
         if (class_exists('\GuzzleHttp\Client')) {
             return self::buildGuzzleHttpAdapter($options);
         }

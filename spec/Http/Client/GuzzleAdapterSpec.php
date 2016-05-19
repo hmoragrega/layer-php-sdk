@@ -47,7 +47,7 @@ class GuzzleAdapterSpec extends ObjectBehavior
     }
 
     function it_can_execute_a_request(
-        Client $client, 
+        Client $client,
         RequestInterface $request,
         GuzzleRequest $guzzleRequest,
         GuzzleResponse $guzzleResponse
