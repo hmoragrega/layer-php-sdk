@@ -10,5 +10,5 @@ function test {
 
 for version in 5.4 5.5 5.6; do
   echo "Testing PHP $version"
-#  test $version
+  test $version
 done
