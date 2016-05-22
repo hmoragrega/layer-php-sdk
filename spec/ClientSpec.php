@@ -3,10 +3,10 @@
 namespace spec\UglyGremlin\Layer;
 
 use PhpSpec\ObjectBehavior;
-use UglyGremlin\Layer\Api\RequestFactory;
-use UglyGremlin\Layer\Api\ResponseChecker;
+use UglyGremlin\Layer\Api\Config;
 use UglyGremlin\Layer\Http\ClientInterface;
 use UglyGremlin\Layer\Log\Logger;
+use UglyGremlin\Layer\Uuid\UuidGeneratorInterface;
 
 /**
  * Class LayerClientSpec
@@ -16,9 +16,9 @@ use UglyGremlin\Layer\Log\Logger;
  */
 class ClientSpec extends ObjectBehavior
 {
-    function let(ClientInterface $httpClient, RequestFactory $requestFactory, ResponseChecker $checker, Logger $logger)
+    function let(ClientInterface $httpClient, UuidGeneratorInterface $uuidGenerator, Config $config, Logger $logger)
     {
-        $this->beConstructedWith($httpClient, $requestFactory, $checker, $logger);
+        $this->beConstructedWith($httpClient, $uuidGenerator, $config, $logger);
     }
 
     function it_is_initializable()

@@ -11,6 +11,7 @@ namespace UglyGremlin\Layer\Exception;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use UglyGremlin\Layer\Http\Exchange;
 
 /**
  * Class ResponseException
@@ -29,21 +30,19 @@ class ResponseException extends RequestException implements ExceptionInterface
     /**
      * ResponseException constructor.
      *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
-     * @param string            $message
-     * @param int               $code
-     * @param \Exception        $previous
+     * @param Exchange    $exchange
+     * @param string      $message
+     * @param int         $code
+     * @param \Exception  $previous
      */
     public function __construct(
-        RequestInterface $request,
-        ResponseInterface $response,
+        Exchange $exchange,
         $message = '',
         $code = 0,
         \Exception $previous = null
     ) {
-        parent::__construct($request, $message, $code, $previous);
-        $this->response = $response;
+        parent::__construct($exchange->getRequest(), $message, $code, $previous);
+        $this->response = $exchange->getResponse();
     }
 
     /**

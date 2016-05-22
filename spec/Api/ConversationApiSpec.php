@@ -10,6 +10,7 @@
 namespace spec\UglyGremlin\Layer\Api;
 
 use Prophecy\Argument;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class ConversationApi
@@ -28,12 +29,8 @@ class ConversationApiSpec extends AbstractApiSpec
     {
         $this->expectCollection();
         $this->requestFactory->get(
-            'users/userId/conversations',
-            Argument::allOf(
-                Argument::withEntry("sort_by", "last_message"),
-                Argument::withEntry("page_size", 50),
-                Argument::withEntry("fromId", "fromId")
-            )
+            'https://api.layer.com/apps/appId/users/userId/conversations?sort_by=last_message&page_size=50&fromId=fromId',
+            $this->getHeaders()
         )->willReturn($this->request);
 
         $this->getByLastMessage('userId', 50, 'fromId')
@@ -43,8 +40,10 @@ class ConversationApiSpec extends AbstractApiSpec
     function it_can_query_the_latest_conversations_by_creation_date()
     {
         $this->expectCollection();
-        $this->requestFactory->get('users/userId/conversations', Argument::withEntry("sort_by", "created_at"))
-            ->willReturn($this->request);
+        $this->requestFactory->get(
+            'https://api.layer.com/apps/appId/users/userId/conversations?sort_by=created_at',
+            $this->getHeaders()
+        )->willReturn($this->request);
 
         $this->getByCreationDate('userId')
             ->shouldReturnAnInstanceOf('UglyGremlin\Layer\Model\Collection');
@@ -53,8 +52,10 @@ class ConversationApiSpec extends AbstractApiSpec
     function it_can_get_one_conversation_as_user_perspective()
     {
         $this->expectEntity();
-        $this->requestFactory->get('users/userId/conversations/conversationId', [])
-            ->willReturn($this->request);
+        $this->requestFactory->get(
+            'https://api.layer.com/apps/appId/users/userId/conversations/conversationId',
+            $this->getHeaders()
+        )->willReturn($this->request);
 
         $this->getOneAsUser('userId', 'conversationId')
             ->shouldReturnAnInstanceOf('UglyGremlin\Layer\Model\Conversation');
@@ -63,8 +64,10 @@ class ConversationApiSpec extends AbstractApiSpec
     function it_can_get_one_conversation_as_system_perspective()
     {
         $this->expectEntity();
-        $this->requestFactory->get('conversations/conversationId', [])
-            ->willReturn($this->request);
+        $this->requestFactory->get(
+            'https://api.layer.com/apps/appId/conversations/conversationId',
+            $this->getHeaders()
+        )->willReturn($this->request);
 
         $this->getOneAsSystem('conversationId')
             ->shouldReturnAnInstanceOf('UglyGremlin\Layer\Model\Conversation');

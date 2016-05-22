@@ -27,7 +27,7 @@ class ConversationApi extends AbstractCollectionProviderApi
      *
      * @return \UglyGremlin\Layer\Model\Collection
      */
-    public function getByCreationDate($userId, $limit = 100, $fromId = null)
+    public function getByCreationDate($userId, $limit = null, $fromId = null)
     {
         return Conversation::fromCollectionResponse(
             $this->query($this->path($userId), $limit, $fromId, ['sort_by' => 'created_at'])

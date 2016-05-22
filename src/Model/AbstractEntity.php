@@ -18,17 +18,10 @@ use UglyGremlin\Layer\Api\CollectionResponse;
  */
 abstract class AbstractEntity extends \stdClass
 {
-    /**
-     * Creates a model
-     *
-     * @param array|\stdClass|null $source
-     */
-    public function __construct($source = null)
+    public function __construct(array $source = [])
     {
-        if (is_array($source) || $source instanceof \stdClass) {
-            foreach ((array) $source as $key => $value) {
-                $this->{$key} = $this->map($key, $value);
-            }
+        foreach ($source as $key => $value) {
+            $this->{$key} = $this->map($key, $value);
         }
     }
 
@@ -40,26 +33,14 @@ abstract class AbstractEntity extends \stdClass
      *
      * @return Collection
      */
-    public static function collection(array $entities = null, $total = null)
+    public static function collection(array $entities = [], $total = null)
     {
         $collection = [];
         foreach ($entities as $entity) {
-            $collection[] = new static($entity);
+            $collection[] = new static((array) $entity);
         }
 
         return new Collection($collection, $total);
-    }
-
-    /**
-     * Builds a collection from an API response
-     *
-     * @param CollectionResponse $response
-     *
-     * @return Collection
-     */
-    public static function fromCollectionResponse(CollectionResponse $response)
-    {
-        return self::collection($response->getList(), $response->getTotal());
     }
 
     /**

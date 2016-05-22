@@ -10,9 +10,9 @@
 namespace UglyGremlin\Layer\Http\Client;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\Exception\RequestException as GuzzleRequestException;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use UglyGremlin\Layer\Exception\RequestException;
 use UglyGremlin\Layer\Http\ClientInterface;
 
@@ -46,22 +46,32 @@ class GuzzleHttpAdapter implements ClientInterface
     public function execute(RequestInterface $request)
     {
         try {
-            return $this->guzzle->request(
-                $request->getMethod(),
-                $request->getUri(),
-                [
-                    'headers' => $request->getHeaders(),
-                    'json'    => $request->getBody(),
-                ]
-            );
-        } catch (ClientException $exception) {
-            // 40x errors
-            return $exception->getResponse();
-        } catch (ServerException $exception) {
-            // 50x errors
-            return $exception->getResponse();
+            return $this->guzzle->request($request->getMethod(), $request->getUri(), [
+                'headers' => $request->getHeaders(),
+                'json'    => $request->getBody(),
+            ]);
+
+        } catch (GuzzleRequestException $exception) {
+            return $this->extractResponseFromException($request, $exception);
+
         } catch (\Exception $exception) {
             throw new RequestException($request, $exception->getMessage(), 0, $exception);
         }
+    }
+
+
+    /**
+     * @param RequestInterface       $request
+     * @param GuzzleRequestException $exception
+     *
+     * @return GuzzleResponse
+     */
+    private function extractResponseFromException(RequestInterface $request, GuzzleRequestException $exception)
+    {
+        if (!$exception->getResponse() instanceof ResponseInterface) {
+            throw new RequestException($request, $exception->getMessage(), 0, $exception);
+        }
+
+        return $exception->getResponse();
     }
 }

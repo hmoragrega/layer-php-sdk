@@ -36,19 +36,17 @@ class Logger
     }
 
     /**
-     * Logs the http message
+     * Logs the HTTP request
      *
      * @param RequestInterface  $request
      * @param ResponseInterface $response
-     * @param \Exception        $exception
      */
-    public function log(RequestInterface $request, ResponseInterface $response = null, \Exception $exception = null)
+    public function log(RequestInterface $request, ResponseInterface $response = null)
     {
         try {
             $this->logger->info("Layer API transaction", [
                 'request'   => $request,
                 'response'  => $response,
-                'exception' => $exception,
             ]);
         } catch (\Exception $exception) {
             trigger_error($this->formatError($exception));
@@ -64,7 +62,7 @@ class Logger
      */
     private function formatError(\Exception $exception)
     {
-        $error  = "Layer API logger found an error logging a transaction".PHP_EOL;
+        $error  = "Layer API logger found an error logging a request".PHP_EOL;
         $error .= "{$exception->getCode()}: {$exception->getMessage()}".PHP_EOL;
         $error .= "{$exception->getLine()} ({$exception->getLine()})".PHP_EOL;
         $error .= $exception->getTraceAsString();

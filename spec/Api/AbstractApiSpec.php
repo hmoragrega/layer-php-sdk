@@ -14,10 +14,12 @@ use Prophecy\Argument;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use UglyGremlin\Layer\Api\CollectionResponse;
-use UglyGremlin\Layer\Api\RequestFactory;
+use UglyGremlin\Layer\Api\Config;
 use UglyGremlin\Layer\Api\ResponseChecker;
 use UglyGremlin\Layer\Http\ClientInterface;
+use UglyGremlin\Layer\Http\RequestFactory;
 use UglyGremlin\Layer\Log\Logger;
+use UglyGremlin\Layer\Uuid\UuidGeneratorInterface;
 
 /**
  * Class AbstractApiSpec
@@ -65,24 +67,30 @@ abstract class AbstractApiSpec extends ObjectBehavior
         ClientInterface $httpClient,
         RequestFactory $requestFactory,
         ResponseChecker $checker,
+        UuidGeneratorInterface $uuidGenerator,
         Logger $logger,
         RequestInterface $request,
         ResponseInterface $response,
         CollectionResponse $collectionResponse
     ) {
-        $this->httpClient = $httpClient;
+        $config = new Config('appId', 'appToken');
+        $uuidGenerator->getUniqueId()->willReturn('uuid');
+
+        $this->httpClient     = $httpClient;
+        $this->checker        = $checker;
         $this->requestFactory = $requestFactory;
-        $this->checker = $checker;
-        $this->logger = $logger;
-        $this->request = $request;
-        $this->response = $response;
+        $this->logger         = $logger;
+        $this->request        = $request;
+        $this->response       = $response;
         $this->collectionResponse = $collectionResponse;
+        $this->collectionResponse->getList()->willReturn([1, 2, 3]);
+        $this->collectionResponse->getTotal()->willReturn(100);
 
         $this->httpClient->execute($request)->willReturn($response);
         $this->httpClient->execute($request)->willReturn($response);
         $this->checker->validate($request, $response)->willReturn($response);
 
-        $this->beConstructedWith($httpClient, $requestFactory, $checker, $logger);
+        $this->beConstructedWith($httpClient, $checker, $uuidGenerator, $requestFactory, $config, $logger);
     }
 
     protected function expectCollection()
@@ -95,5 +103,28 @@ abstract class AbstractApiSpec extends ObjectBehavior
     {
         $this->checker->parseEntity($this->request, $this->response)
             ->willReturn($this->collectionResponse);
+    }
+
+    protected function getHeaders()
+    {
+        return [
+            'Accept'        => 'application/vnd.layer+json; version=1.1',
+            'Authorization' => 'Bearer appToken',
+            'Content-Type'  => 'application/json',
+            'User-Agent'    => 'UglyGremlin\'s Layer PHP SDK. 1.0.0',
+            'If-None-Match' => 'uuid',
+        ];
+    }
+
+    protected function getPatchHeaders()
+    {
+        return [
+            'Accept'                 => 'application/vnd.layer+json; version=1.1',
+            'Authorization'          => 'Bearer appToken',
+            'Content-Type'           => 'application/vnd.layer-patch+json',
+            'User-Agent'             => 'UglyGremlin\'s Layer PHP SDK. 1.0.0',
+            'If-None-Match'          => 'uuid',
+            'X-HTTP-Method-Override' => 'PATCH',
+        ];
     }
 }

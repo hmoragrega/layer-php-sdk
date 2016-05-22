@@ -13,8 +13,9 @@ use GuzzleHttp\Psr7\Request;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use UglyGremlin\Layer\Exception\RequestException;
-use UglyGremlin\Layer\Exception\ResponseException;
 use UglyGremlin\Layer\Http\ClientInterface;
+use UglyGremlin\Layer\Http\Exchange;
+use UglyGremlin\Layer\Http\RequestFactory;
 use UglyGremlin\Layer\Log\Logger;
 use UglyGremlin\Layer\Uuid\UuidGeneratorInterface;
 
@@ -29,6 +30,32 @@ abstract class AbstractApi
 {
     const API_BASE_URL = 'https://api.layer.com/';
 
+    const STATUS_OK         = 200;
+    const STATUS_CREATED    = 201;
+    const STATUS_NO_CONTENT = 204;
+
+    const HEADER_COUNT = 'layer-count';
+
+    /**
+     * @var Config
+     */
+    private $config;
+
+    /**
+     * @var RequestFactory
+     */
+    private $requestFactory;
+
+    /**
+     * @var ResponseValidator
+     */
+    private $responseValidator;
+
+    /**
+     * @var ResponseParser
+     */
+    private $responseParser;
+
     /**
      * The HTTP client to execute request.
      *
@@ -37,21 +64,9 @@ abstract class AbstractApi
     private $httpClient;
 
     /**
-     * The object that validates the API response
-     *
-     * @var ResponseChecker
-     */
-    private $checker;
-
-    /**
      * @var UuidGeneratorInterface
      */
     private $uuidGenerator;
-
-    /**
-     * @var Config
-     */
-    private $config;
 
     /**
      * It logs the requests and the responses.
@@ -63,143 +78,133 @@ abstract class AbstractApi
     /**
      * Client constructor.
      *
-     * @param ClientInterface        $httpClient
-     * @param ResponseChecker        $checker
-     * @param UuidGeneratorInterface $uuidGenerator
      * @param Config                 $config
+     * @param ClientInterface        $httpClient
+     * @param RequestFactory         $requestFactory
+     * @param ResponseValidator      $responseValidator
+     * @param ResponseParser         $responseParser
+     * @param UuidGeneratorInterface $uuidGenerator
      * @param Logger                 $logger
      */
     public function __construct(
-        ClientInterface $httpClient,
-        ResponseChecker $checker,
-        UuidGeneratorInterface $uuidGenerator,
         Config $config,
+        ClientInterface $httpClient,
+        RequestFactory $requestFactory,
+        ResponseValidator $responseValidator,
+        ResponseParser $responseParser,
+        UuidGeneratorInterface $uuidGenerator,
         Logger $logger
     ) {
-        $this->httpClient     = $httpClient;
-        $this->checker        = $checker;
-        $this->uuidGenerator  = $uuidGenerator;
-        $this->config         = $config;
-        $this->logger         = $logger;
+        $this->config            = $config;
+        $this->httpClient        = $httpClient;
+        $this->requestFactory    = $requestFactory;
+        $this->uuidGenerator     = $uuidGenerator;
+        $this->logger            = $logger;
+        $this->responseValidator = $responseValidator;
+        $this->responseParser    = $responseParser;
     }
 
-    /**
-     * Returns the response checker
-     *
-     * @return ResponseChecker
-     */
-    protected function getChecker()
+    public function getEntity($path)
     {
-        return $this->checker;
+        return $this->responseParser->parseObject($this->execute(RequestFactory::GET, $path));
     }
 
     /**
-     * Gets an entity response
-     *
-     * @param string $path
-     *
-     * @return \stdClass
-     */
-    protected function getEntity($path)
-    {
-        list($request, $response) = $this->get($path);
-
-        return $this->checker->parseEntity($request, $response);
-    }
-
-    /**
-     * Executes a GET method
-     *
      * @param string $path
      * @param array  $params
      *
      * @return array
      */
-    protected function get($path, array $params = [])
+    public function getCollection($path, array $params = [])
     {
-        $request  = $this->buildRequest('GET', $this->getApiUrl($path, $params), $this->getHeaders());
-        $response = $this->execute($request);
+        if (count($params) > 0) {
+            $path .= '?'.http_build_query($params);
+        }
 
-        return [$request, $response];
+        /** @var ResponseInterface $response */
+        return $this->responseParser->parseList($this->execute(RequestFactory::GET, $path));
+    }
+    public function post($path, $payload = null)
+    {
+        $this->execute(RequestFactory::POST, $path, $payload);
+    }
+    public function put($path, $payload = null)
+    {
+        $this->execute(RequestFactory::PUT, $path, $payload);
+    }
+    public function patch($path, $payload = null)
+    {
+        $this->execute(RequestFactory::PATCH, $path, $payload);
+    }
+    public function delete($path)
+    {
+        $this->execute(RequestFactory::DELETE, $path);
     }
 
     /**
-     * Returns a response from the API for a POST method
+     * @param string $method
+     * @param string $url
+     * @param null   $payload
      *
-     * @param string                $path
-     * @param array|stdClass|string $payload
+     * @return Exchange
      */
-    protected function post($path, $payload)
+    private function execute($method, $url, $payload = null)
     {
-        $this->execute($this->buildRequest('POST', $this->getApiUrl($path), $this->getHeaders(), $payload));
+        $request  = $this->buildRequest($method, $url, $payload);
+        $response = $this->executeRequest($request);
+        
+        $exchange = new Exchange($request, $response);
+
+        return $this->responseValidator->validate($exchange);
     }
 
     /**
-     * Returns a response from the API for a POST method
+     * Builds a request
+     * 
+     * @param      $method
+     * @param      $path
+     * @param null $payload
      *
-     * @param string       $path
-     * @param string|array $payload
+     * @return RequestInterface
      */
-    protected function patch($path, $payload)
+    private function buildRequest($method, $path, $payload = null)
     {
-        $this->execute($this->buildRequest('PATCH', $this->getApiUrl($path), $this->getPatchHeaders(), $payload));
+        $headers = $method === RequestFactory::PATCH
+            ? $this->getPatchHeaders()
+            : $this->getHeaders();
+
+        return $this->requestFactory->create($method, $this->getApiUrl($path), $headers, $this->encode($payload));
     }
 
     /**
-     * Returns a response from the API for a PUT method
-     *
-     * @param string                $path
-     * @param array|stdClass|string $payload
-     */
-    protected function put($path, $payload)
-    {
-        $this->execute($this->buildRequest('PUT', $this->getApiUrl($path), $this->getHeaders(), $payload));
-    }
-
-    /**
-     * Returns a response from the API for a GET method
-     *
-     * @param string $path
-     */
-    protected function delete($path)
-    {
-        $this->execute($this->buildRequest('DELETE', $this->getApiUrl($path), $this->getHeaders()));
-    }
-
-    /**
-     * Gets the response
-     *
      * @param RequestInterface $request
      *
      * @return ResponseInterface
      */
-    protected function execute(RequestInterface $request)
+    private function executeRequest(RequestInterface $request)
     {
         try {
             $response = $this->httpClient->execute($request);
-            $this->checker->validate($request, $response);
             $this->logger->log($request, $response);
 
             return $response;
-        } catch (ResponseException $exception) {
-            $this->logger->log($request, $exception->getResponse());
-            throw $exception;
+
         } catch (\Exception $exception) {
-            $this->logger->log($request, isset($response) ? $response : null);
-            throw new RequestException($request, $exception->getMessage(), 0, null, $exception);
+            $this->logger->log($request);
+            throw new RequestException($request, $exception->getMessage(), $exception->getCode(), $exception);
         }
     }
 
     /**
-     * Transform the payload to the expected string
+     * Encode the payload to the expected string
      *
      * @param array|\stdClass|string $payload
      *
      * @return string
      */
-    private function transformPayload($payload)
+    private function encode($payload)
     {
-        if (!is_string($payload)) {
+        if ($payload !== null && !is_string($payload)) {
             $payload = json_encode($payload);
         }
 
@@ -207,37 +212,15 @@ abstract class AbstractApi
     }
 
     /**
-     * Builds a request
-     *
-     * @param string $method  HTTP method for the request
-     * @param string $url     API endpoint URL
-     * @param array  $headers Headers
-     * @param mixed  $payload Message body
-     *
-     * @return Request
-     */
-    public function buildRequest($method, $url, array $headers = [], $payload = null)
-    {
-        return new Request($method, $url, $headers, $this->transformPayload($payload));
-    }
-
-    /**
      * Builds the final API URL
      *
      * @param string $path
-     * @param array  $params
      *
      * @return string
      */
-    private function getApiUrl($path, array $params = [])
+    private function getApiUrl($path)
     {
-        $url = $this->config->getBaseUrl().'apps/'.$this->config->getAppId().'/'.$path;
-
-        if (count($params) > 0) {
-            $url .= '?'.http_build_query($params);
-        }
-
-        return $url;
+        return $this->config->getBaseUrl().'apps/'.$this->config->getAppId().'/'.$path;
     }
 
     /**

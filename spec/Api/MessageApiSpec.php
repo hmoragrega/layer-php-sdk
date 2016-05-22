@@ -28,22 +28,21 @@ class MessageApiSpec extends AbstractApiSpec
     {
         $this->expectCollection();
         $this->requestFactory->get(
-            'users/userId/conversations/conversationId/messages',
-            Argument::allOf(
-                Argument::withEntry("page_size", 50),
-                Argument::withEntry("fromId", "fromId")
-            )
+            'https://api.layer.com/apps/appId/users/userId/conversations/conversationId/messages',
+            $this->getHeaders()
         )->willReturn($this->request);
 
-        $this->getByConversationAsUser('userId', 'conversationId', 50, 'fromId')
+        $this->getByConversationAsUser('userId', 'conversationId')
             ->shouldReturnAnInstanceOf('UglyGremlin\Layer\Model\Collection');
     }
 
     function it_can_query_the_messages_from_a_conversation_from_system_perspective()
     {
         $this->expectCollection();
-        $this->requestFactory->get('conversations/conversationId/messages', [])
-            ->willReturn($this->request);
+        $this->requestFactory->get(
+            'https://api.layer.com/apps/appId/conversations/conversationId/messages',
+            $this->getHeaders()
+        )->willReturn($this->request);
 
         $this->getByConversationAsSystem('conversationId')
             ->shouldReturnAnInstanceOf('UglyGremlin\Layer\Model\Collection');
@@ -52,8 +51,10 @@ class MessageApiSpec extends AbstractApiSpec
     function it_can_get_one_message_as_user_perspective()
     {
         $this->expectEntity();
-        $this->requestFactory->get('users/userId/messages/messageId', [])
-            ->willReturn($this->request);
+        $this->requestFactory->get(
+            'https://api.layer.com/apps/appId/users/userId/messages/messageId',
+            $this->getHeaders()
+        )->willReturn($this->request);
 
         $this->getOneAsUser('userId', 'messageId')
             ->shouldReturnAnInstanceOf('UglyGremlin\Layer\Model\Message');
@@ -62,8 +63,10 @@ class MessageApiSpec extends AbstractApiSpec
     function it_can_get_one_message_as_system_perspective()
     {
         $this->expectEntity();
-        $this->requestFactory->get('conversations/conversationId/messages/messageId', [])
-            ->willReturn($this->request);
+        $this->requestFactory->get(
+            'https://api.layer.com/apps/appId/conversations/conversationId/messages/messageId',
+            $this->getHeaders()
+        )->willReturn($this->request);
 
         $this->getOneAsSystem('conversationId', 'messageId')
             ->shouldReturnAnInstanceOf('UglyGremlin\Layer\Model\Message');

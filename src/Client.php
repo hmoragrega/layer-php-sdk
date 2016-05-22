@@ -13,9 +13,11 @@ use UglyGremlin\Layer\Api\Config;
 use UglyGremlin\Layer\Api\ConversationApi;
 use UglyGremlin\Layer\Api\IdentityApi;
 use UglyGremlin\Layer\Api\MessageApi;
-use UglyGremlin\Layer\Api\RequestFactory;
 use UglyGremlin\Layer\Api\ResponseChecker;
+use UglyGremlin\Layer\Api\ResponseParser;
+use UglyGremlin\Layer\Api\ResponseValidator;
 use UglyGremlin\Layer\Http\ClientInterface;
+use UglyGremlin\Layer\Http\RequestFactory;
 use UglyGremlin\Layer\Log\Logger;
 use UglyGremlin\Layer\Uuid\UuidGeneratorInterface;
 
@@ -42,24 +44,34 @@ class Client
     private $identities;
 
     /**
-     * @var ClientInterface
+     * @var RequestFactory
      */
-    private $httpClient;
+    private $requestFactory;
 
     /**
-     * @var ResponseChecker
+     * @var ResponseValidator
      */
-    private $checker;
+    private $responseValidator;
 
     /**
-     * @var UuidGeneratorInterface
+     * @var ResponseParser
      */
-    private $uuidGenerator;
+    private $responseParser;
 
     /**
      * @var Config
      */
     private $config;
+
+    /**
+     * @var ClientInterface
+     */
+    private $httpClient;
+
+    /**
+     * @var UuidGeneratorInterface
+     */
+    private $uuidGenerator;
 
     /**
      * @var Logger
@@ -70,23 +82,23 @@ class Client
      * Client constructor.
      *
      * @param ClientInterface        $httpClient
-     * @param ResponseChecker        $checker
      * @param UuidGeneratorInterface $uuidGenerator
      * @param Config                 $config
      * @param Logger                 $logger
      */
     public function __construct(
-        ClientInterface $httpClient,
-        ResponseChecker $checker,
-        UuidGeneratorInterface $uuidGenerator,
         Config $config,
+        ClientInterface $httpClient,
+        UuidGeneratorInterface $uuidGenerator,
         Logger $logger
     ) {
-        $this->httpClient    = $httpClient;
-        $this->checker       = $checker;
-        $this->uuidGenerator = $uuidGenerator;
-        $this->config        = $config;
-        $this->logger        = $logger;
+        $this->requestFactory    = new RequestFactory();
+        $this->responseParser    = new ResponseParser();
+        $this->responseValidator = new ResponseValidator($this->responseParser);
+        $this->config            = $config;
+        $this->httpClient        = $httpClient;
+        $this->uuidGenerator     = $uuidGenerator;
+        $this->logger            = $logger;
     }
 
     /**
@@ -98,10 +110,12 @@ class Client
     {
         if (!$this->conversations instanceof ConversationApi) {
             $this->conversations = new ConversationApi(
-                $this->httpClient,
-                $this->checker,
-                $this->uuidGenerator,
                 $this->config,
+                $this->httpClient,
+                $this->requestFactory,
+                $this->responseValidator,
+                $this->responseParser,
+                $this->uuidGenerator,
                 $this->logger
             );
         }
@@ -118,10 +132,12 @@ class Client
     {
         if (!$this->messages instanceof MessageApi) {
             $this->messages = new MessageApi(
-                $this->httpClient,
-                $this->checker,
-                $this->uuidGenerator,
                 $this->config,
+                $this->httpClient,
+                $this->requestFactory,
+                $this->responseValidator,
+                $this->responseParser,
+                $this->uuidGenerator,
                 $this->logger
             );
         }
@@ -138,10 +154,12 @@ class Client
     {
         if (!$this->identities instanceof IdentityApi) {
             $this->identities = new IdentityApi(
-                $this->httpClient,
-                $this->checker,
-                $this->uuidGenerator,
                 $this->config,
+                $this->httpClient,
+                $this->requestFactory,
+                $this->responseValidator,
+                $this->responseParser,
+                $this->uuidGenerator,
                 $this->logger
             );
         }

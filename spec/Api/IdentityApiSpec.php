@@ -27,8 +27,10 @@ class IdentityApiSpec extends AbstractApiSpec
     function it_can_get_one_message_as_user_perspective()
     {
         $this->expectEntity();
-        $this->requestFactory->get('users/userId/identity', [])
-            ->willReturn($this->request);
+        $this->requestFactory->get(
+            'https://api.layer.com/apps/appId/users/userId/identity',
+            $this->getHeaders()
+        )->willReturn($this->request);
 
         $this->getOne('userId')
             ->shouldReturnAnInstanceOf('UglyGremlin\Layer\Model\Identity');
@@ -39,8 +41,11 @@ class IdentityApiSpec extends AbstractApiSpec
      */
     function it_can_create_an_identity_from_different_inputs($identity, $payload)
     {
-        $this->requestFactory->post('users/userId/identity', $payload)
-            ->willReturn($this->request);
+        $this->requestFactory->post(
+            'https://api.layer.com/apps/appId/users/userId/identity',
+            $this->getHeaders(),
+            $payload
+        )->willReturn($this->request);
 
         $this->create('userId', $identity);
     }
@@ -50,8 +55,11 @@ class IdentityApiSpec extends AbstractApiSpec
      */
     function it_can_update_an_identity_from_different_inputs($identity, $payload)
     {
-        $this->requestFactory->patch('users/userId/identity', $payload)
-            ->willReturn($this->request);
+        $this->requestFactory->patch(
+            'https://api.layer.com/apps/appId/users/userId/identity',
+            $this->getPatchHeaders(),
+            $payload
+        )->willReturn($this->request);
 
         $this->update('userId', $identity);
     }
@@ -61,16 +69,21 @@ class IdentityApiSpec extends AbstractApiSpec
      */
     function it_can_replace_an_identity_from_different_inputs($identity, $payload)
     {
-        $this->requestFactory->put('users/userId/identity', $payload)
-            ->willReturn($this->request);
+        $this->requestFactory->put(
+            'https://api.layer.com/apps/appId/users/userId/identity',
+            $this->getHeaders(),
+            $payload
+        )->willReturn($this->request);
 
         $this->replace('userId', $identity);
     }
 
     function it_can_remove_an_identity_from_different_inputs()
     {
-        $this->requestFactory->delete('users/userId/identity')
-            ->willReturn($this->request);
+        $this->requestFactory->delete(
+            'https://api.layer.com/apps/appId/users/userId/identity',
+            $this->getHeaders()
+        )->willReturn($this->request);
 
         $this->remove('userId');
     }

@@ -30,21 +30,6 @@ use UglyGremlin\Layer\Uuid\UuidGeneratorInterface;
 class ClientBuilder
 {
     /**
-     * @var string
-     */
-    private $appId;
-
-    /**
-     * @var string
-     */
-    private $appToken;
-
-    /**
-     * @var string
-     */
-    private $baseUrl;
-
-    /**
      * Request execution timeout in seconds
      *
      * @var ClientInterface
@@ -120,10 +105,7 @@ class ClientBuilder
     {
         $this->buildMissingDependencies();
 
-        $checker        = new ResponseChecker();
-        $logger         = new Logger($this->logger);
-
-        return new Client($this->httpClient, $checker, $this->uuidGenerator, $this->config, $logger);
+        return new Client($this->config, $this->httpClient, $this->uuidGenerator, new Logger($this->logger));
     }
 
     /**

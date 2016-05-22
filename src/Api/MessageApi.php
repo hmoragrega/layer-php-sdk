@@ -28,9 +28,9 @@ class MessageApi extends AbstractCollectionProviderApi
      */
     public function getByConversationAsUser($userId, $conversationId, $limit = null, $fromId = null)
     {
-        return Message::fromCollectionResponse(
-            $this->query($this->path($userId, $conversationId), $limit, $fromId)
-        );
+        list($items, $total) = $this->query($this->path($userId, $conversationId), $limit, $fromId);
+
+        return Message::collection($items, $total);
     }
 
     /**
@@ -42,9 +42,9 @@ class MessageApi extends AbstractCollectionProviderApi
      */
     public function getByConversationAsSystem($conversationId, $limit = null, $fromId = null)
     {
-        return Message::fromCollectionResponse(
-            $this->query($this->path(null, $conversationId), $limit, $fromId)
-        );
+        list($items, $total) = $this->query($this->path(null, $conversationId), $limit, $fromId);
+
+        return Message::collection($items, $total);
     }
 
     /**
@@ -55,7 +55,7 @@ class MessageApi extends AbstractCollectionProviderApi
      */
     public function getOneAsUser($userId, $messageId)
     {
-        return new Message($this->getEntity($this->path($userId, null, $messageId)));
+        return new Message((array) $this->getEntity($this->path($userId, null, $messageId)));
     }
 
     /**
@@ -66,7 +66,7 @@ class MessageApi extends AbstractCollectionProviderApi
      */
     public function getOneAsSystem($conversationId, $messageId)
     {
-        return new Message($this->getEntity($this->path(null, $conversationId, $messageId)));
+        return new Message((array) $this->getEntity($this->path(null, $conversationId, $messageId)));
     }
 
     /**

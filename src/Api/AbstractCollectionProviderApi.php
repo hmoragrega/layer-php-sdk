@@ -24,7 +24,7 @@ abstract class AbstractCollectionProviderApi extends AbstractApi
      * @param string|null $fromId
      * @param array       $params
      *
-     * @return CollectionResponse
+     * @return array
      */
     protected function query($path, $limit = null, $fromId = null, array $params = [])
     {
@@ -37,20 +37,5 @@ abstract class AbstractCollectionProviderApi extends AbstractApi
         }
 
         return $this->getCollection($path, $params);
-    }
-
-    /**
-     * Gets an collection response
-     *
-     * @param string $path
-     * @param array  $params
-     *
-     * @return CollectionResponse
-     */
-    protected function getCollection($path, array $params = [])
-    {
-        list($request, $response) = $this->get($path, $params);
-
-        return $this->getChecker()->parseCollection($request, $response);
     }
 }
