@@ -34,6 +34,14 @@ class ResponseValidator
     const STATUS_NOT_FOUND    = 404;
     const STATUS_CONFLICT     = 409;
     const STATUS_GONE         = 410;
+    
+    private $exceptionMap = [
+        self::STATUS_NOT_FOUND    => 'UglyGremlin\Layer\Exception\NotFoundException',
+        self::STATUS_GONE         => 'UglyGremlin\Layer\Exception\GoneException',
+        self::STATUS_CONFLICT     => 'UglyGremlin\Layer\Exception\ConflictException',
+        self::STATUS_BAD_REQUEST  => 'UglyGremlin\Layer\Exception\BadRequestException',
+        self::STATUS_UNAUTHORIZED => 'UglyGremlin\Layer\Exception\UnauthorizedException',
+    ];
 
     /**
      * @var ResponseParser
@@ -78,18 +86,11 @@ class ResponseValidator
     {
         $error = new Error((array) $this->parser->parseObject($exchange));
 
-        switch ($statusCode) {
-            case self::STATUS_NOT_FOUND:
-            case self::STATUS_GONE:
-                throw new NotFoundException($exchange, $error->message, $error->code);
-            case self::STATUS_CONFLICT:
-                throw new ConflictException($exchange, $error->message, $error->code);
-            case self::STATUS_BAD_REQUEST:
-                throw new BadRequestException($exchange, $error->message, $error->code);
-            case self::STATUS_UNAUTHORIZED:
-                throw new UnauthorizedException($exchange, $error->message, $error->code);
-            default:
-                throw new ResponseException($exchange, $error->message, $error->code);
+        if (isset($this->exceptionMap[$statusCode])) {
+            $exception = new $this->exceptionMap[$statusCode];
+            throw new $exception($exchange, $error->message, $error->code);
         }
+
+        throw new ResponseException($exchange, $error->message, $error->code);
     }
 }
