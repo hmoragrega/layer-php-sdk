@@ -9,15 +9,12 @@
 
 namespace UglyGremlin\Layer\Api;
 
-use GuzzleHttp\Psr7\Request;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use UglyGremlin\Layer\Exception\RequestException;
 use UglyGremlin\Layer\Http\ClientInterface;
 use UglyGremlin\Layer\Http\Exchange;
-use UglyGremlin\Layer\Http\RequestFactory;
 use UglyGremlin\Layer\Log\Logger;
-use UglyGremlin\Layer\Uuid\UuidGeneratorInterface;
 
 /**
  * Class AbstractApi
@@ -28,19 +25,6 @@ use UglyGremlin\Layer\Uuid\UuidGeneratorInterface;
  */
 abstract class AbstractApi
 {
-    const API_BASE_URL = 'https://api.layer.com/';
-
-    const STATUS_OK         = 200;
-    const STATUS_CREATED    = 201;
-    const STATUS_NO_CONTENT = 204;
-
-    const HEADER_COUNT = 'layer-count';
-
-    /**
-     * @var Config
-     */
-    private $config;
-
     /**
      * @var RequestFactory
      */
@@ -64,11 +48,6 @@ abstract class AbstractApi
     private $httpClient;
 
     /**
-     * @var UuidGeneratorInterface
-     */
-    private $uuidGenerator;
-
-    /**
      * It logs the requests and the responses.
      *
      * @var Logger
@@ -78,27 +57,21 @@ abstract class AbstractApi
     /**
      * Client constructor.
      *
-     * @param Config                 $config
      * @param ClientInterface        $httpClient
      * @param RequestFactory         $requestFactory
      * @param ResponseValidator      $responseValidator
      * @param ResponseParser         $responseParser
-     * @param UuidGeneratorInterface $uuidGenerator
      * @param Logger                 $logger
      */
     public function __construct(
-        Config $config,
         ClientInterface $httpClient,
         RequestFactory $requestFactory,
         ResponseValidator $responseValidator,
         ResponseParser $responseParser,
-        UuidGeneratorInterface $uuidGenerator,
         Logger $logger
     ) {
-        $this->config            = $config;
         $this->httpClient        = $httpClient;
         $this->requestFactory    = $requestFactory;
-        $this->uuidGenerator     = $uuidGenerator;
         $this->logger            = $logger;
         $this->responseValidator = $responseValidator;
         $this->responseParser    = $responseParser;
@@ -143,37 +116,19 @@ abstract class AbstractApi
 
     /**
      * @param string $method
-     * @param string $url
+     * @param string $path
      * @param null   $payload
      *
      * @return Exchange
      */
-    private function execute($method, $url, $payload = null)
+    private function execute($method, $path, $payload = null)
     {
-        $request  = $this->buildRequest($method, $url, $payload);
+        $request  = $this->requestFactory->create($method, $path, $payload);
         $response = $this->executeRequest($request);
-        
+
         $exchange = new Exchange($request, $response);
 
         return $this->responseValidator->validate($exchange);
-    }
-
-    /**
-     * Builds a request
-     * 
-     * @param      $method
-     * @param      $path
-     * @param null $payload
-     *
-     * @return RequestInterface
-     */
-    private function buildRequest($method, $path, $payload = null)
-    {
-        $headers = $method === RequestFactory::PATCH
-            ? $this->getPatchHeaders()
-            : $this->getHeaders();
-
-        return $this->requestFactory->create($method, $this->getApiUrl($path), $headers, $this->encode($payload));
     }
 
     /**
@@ -193,63 +148,5 @@ abstract class AbstractApi
             $this->logger->log($request);
             throw new RequestException($request, $exception->getMessage(), $exception->getCode(), $exception);
         }
-    }
-
-    /**
-     * Encode the payload to the expected string
-     *
-     * @param array|\stdClass|string $payload
-     *
-     * @return string
-     */
-    private function encode($payload)
-    {
-        if ($payload !== null && !is_string($payload)) {
-            $payload = json_encode($payload);
-        }
-
-        return $payload;
-    }
-
-    /**
-     * Builds the final API URL
-     *
-     * @param string $path
-     *
-     * @return string
-     */
-    private function getApiUrl($path)
-    {
-        return $this->config->getBaseUrl().'apps/'.$this->config->getAppId().'/'.$path;
-    }
-
-    /**
-     * Returns the headers to send on the requests
-     *
-     * @return array
-     */
-    private function getHeaders()
-    {
-        return [
-            'Accept'        => 'application/vnd.layer+json; version=1.1',
-            'Authorization' => 'Bearer '.$this->config->getAppToken(),
-            'Content-Type'  => 'application/json',
-            'User-Agent'    => 'UglyGremlin\'s Layer PHP SDK. 1.0.0',
-            'If-None-Match' => $this->uuidGenerator->getUniqueId(),
-        ];
-    }
-
-    /**
-     * Returns the headers to send on the PATCH requests
-     *
-     * @return array
-     */
-    private function getPatchHeaders()
-    {
-        $headers = $this->getHeaders();
-        $headers['Content-Type']           = 'application/vnd.layer-patch+json';
-        $headers['X-HTTP-Method-Override'] = 'PATCH';
-
-        return $headers;
     }
 }

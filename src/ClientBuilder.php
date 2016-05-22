@@ -29,6 +29,8 @@ use UglyGremlin\Layer\Uuid\UuidGeneratorInterface;
  */
 class ClientBuilder
 {
+    const API_BASE_URL = 'https://api.layer.com/';
+
     /**
      * Request execution timeout in seconds
      *
@@ -85,7 +87,7 @@ class ClientBuilder
      *
      * @return $this
      */
-    public static function client($appId, $appToken, $baseUrl = AbstractApi::API_BASE_URL)
+    public static function client($appId, $appToken, $baseUrl = self::API_BASE_URL)
     {
         return new self($appId, $appToken, $baseUrl);
     }

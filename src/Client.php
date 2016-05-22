@@ -13,11 +13,11 @@ use UglyGremlin\Layer\Api\Config;
 use UglyGremlin\Layer\Api\ConversationApi;
 use UglyGremlin\Layer\Api\IdentityApi;
 use UglyGremlin\Layer\Api\MessageApi;
+use UglyGremlin\Layer\Api\RequestFactory;
 use UglyGremlin\Layer\Api\ResponseChecker;
 use UglyGremlin\Layer\Api\ResponseParser;
 use UglyGremlin\Layer\Api\ResponseValidator;
 use UglyGremlin\Layer\Http\ClientInterface;
-use UglyGremlin\Layer\Http\RequestFactory;
 use UglyGremlin\Layer\Log\Logger;
 use UglyGremlin\Layer\Uuid\UuidGeneratorInterface;
 
@@ -59,19 +59,9 @@ class Client
     private $responseParser;
 
     /**
-     * @var Config
-     */
-    private $config;
-
-    /**
      * @var ClientInterface
      */
     private $httpClient;
-
-    /**
-     * @var UuidGeneratorInterface
-     */
-    private $uuidGenerator;
 
     /**
      * @var Logger
@@ -92,12 +82,10 @@ class Client
         UuidGeneratorInterface $uuidGenerator,
         Logger $logger
     ) {
-        $this->requestFactory    = new RequestFactory();
+        $this->requestFactory    = new RequestFactory($config, $uuidGenerator);
         $this->responseParser    = new ResponseParser();
         $this->responseValidator = new ResponseValidator($this->responseParser);
-        $this->config            = $config;
         $this->httpClient        = $httpClient;
-        $this->uuidGenerator     = $uuidGenerator;
         $this->logger            = $logger;
     }
 
@@ -110,12 +98,10 @@ class Client
     {
         if (!$this->conversations instanceof ConversationApi) {
             $this->conversations = new ConversationApi(
-                $this->config,
                 $this->httpClient,
                 $this->requestFactory,
                 $this->responseValidator,
                 $this->responseParser,
-                $this->uuidGenerator,
                 $this->logger
             );
         }
@@ -132,12 +118,10 @@ class Client
     {
         if (!$this->messages instanceof MessageApi) {
             $this->messages = new MessageApi(
-                $this->config,
                 $this->httpClient,
                 $this->requestFactory,
                 $this->responseValidator,
                 $this->responseParser,
-                $this->uuidGenerator,
                 $this->logger
             );
         }
@@ -154,12 +138,10 @@ class Client
     {
         if (!$this->identities instanceof IdentityApi) {
             $this->identities = new IdentityApi(
-                $this->config,
                 $this->httpClient,
                 $this->requestFactory,
                 $this->responseValidator,
                 $this->responseParser,
-                $this->uuidGenerator,
                 $this->logger
             );
         }

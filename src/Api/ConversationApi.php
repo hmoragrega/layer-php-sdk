@@ -29,9 +29,9 @@ class ConversationApi extends AbstractCollectionProviderApi
      */
     public function getByCreationDate($userId, $limit = null, $fromId = null)
     {
-        return Conversation::fromCollectionResponse(
-            $this->query($this->path($userId), $limit, $fromId, ['sort_by' => 'created_at'])
-        );
+        list($items, $total) = $this->query($this->path($userId), $limit, $fromId, ['sort_by' => 'created_at']);
+
+        return Conversation::collection($items, $total);
     }
 
     /**
@@ -45,9 +45,9 @@ class ConversationApi extends AbstractCollectionProviderApi
      */
     public function getByLastMessage($userId, $limit = 100, $fromId = null)
     {
-        return Conversation::fromCollectionResponse(
-            $this->query($this->path($userId), $limit, $fromId, ['sort_by' => 'last_message'])
-        );
+        list($items, $total) = $this->query($this->path($userId), $limit, $fromId, ['sort_by' => 'last_message']);
+
+        return Conversation::collection($items, $total);
     }
 
     /**
