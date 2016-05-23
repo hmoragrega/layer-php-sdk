@@ -15,22 +15,27 @@ use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Message\RequestInterface as GuzzleRequest;
 use GuzzleHttp\Message\ResponseInterface as GuzzleResponse;
 use GuzzleHttp\Stream\StreamInterface;
+use PhpSpec\Exception\Example\SkippingException;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 use UglyGremlin\Layer\Exception\RequestException;
 
 /**
  * Class GuzzleHttpAdapterSpec
  *
  * @package spec\UglyGremlin\Layer\Http\Client
+ * @require \GuzzleHttp\Client
  * @mixin \UglyGremlin\Layer\Http\Client\GuzzleHttpLegacyAdapter
  */
 class GuzzleHttpLegacyAdapterSpec extends ObjectBehavior
 {
     function let(Client $client, GuzzleResponse $guzzleResponse, StreamInterface $body)
     {
+        if (!method_exists('GuzzleHttp\Client', 'createRequest')) {
+            throw new SkippingException('The required dependency is not installed');
+        }
+
         $guzzleResponse->getStatusCode()->willReturn(200);
         $guzzleResponse->getHeaders()->willReturn(['bar' => 'foo']);
         $guzzleResponse->getBody()->willReturn($body);

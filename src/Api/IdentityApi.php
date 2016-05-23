@@ -29,7 +29,7 @@ class IdentityApi extends AbstractApi
      */
     public function getOne($userId)
     {
-        return new Identity($this->getEntity($this->path($userId)));
+        return new Identity($this->getEntity("users/$userId/identity"));
     }
 
     /**
@@ -44,7 +44,7 @@ class IdentityApi extends AbstractApi
      */
     public function create($userId, $identity)
     {
-        $this->post($this->path($userId), $identity);
+        $this->post("users/$userId/identity", $identity);
     }
 
     /**
@@ -61,7 +61,7 @@ class IdentityApi extends AbstractApi
             $payload = [$payload];
         }
 
-        $this->patch($this->path($userId), $payload);
+        $this->patch("users/$userId/identity", $payload);
     }
 
     /**
@@ -74,7 +74,7 @@ class IdentityApi extends AbstractApi
      */
     public function replace($userId, $identity)
     {
-        $this->put($this->path($userId), $identity);
+        $this->put("users/$userId/identity", $identity);
     }
 
     /**
@@ -86,18 +86,6 @@ class IdentityApi extends AbstractApi
      */
     public function remove($userId)
     {
-        $this->delete($this->path($userId));
-    }
-
-    /**
-     * Returns the path for the identity API
-     *
-     * @param string $userId
-     *
-     * @return string
-     */
-    private function path($userId)
-    {
-        return "users/$userId/identity";
+        $this->delete("users/$userId/identity");
     }
 }

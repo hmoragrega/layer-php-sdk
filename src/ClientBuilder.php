@@ -73,7 +73,7 @@ class ClientBuilder
      * @param string $appToken
      * @param string $baseUrl
      */
-    private function __construct($appId, $appToken, $baseUrl)
+    public function __construct($appId, $appToken, $baseUrl = self::API_BASE_URL)
     {
         $this->config = new Config($appId, $appToken, $baseUrl);
     }

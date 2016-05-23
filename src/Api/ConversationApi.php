@@ -29,7 +29,7 @@ class ConversationApi extends AbstractCollectionProviderApi
      */
     public function getByCreationDate($userId, $limit = null, $fromId = null)
     {
-        list($items, $total) = $this->query($this->path($userId), $limit, $fromId, ['sort_by' => 'created_at']);
+        list($items, $total) = $this->query("users/$userId/conversations", $limit, $fromId, ['sort_by' => 'created_at']);
 
         return Conversation::collection($items, $total);
     }
@@ -43,9 +43,9 @@ class ConversationApi extends AbstractCollectionProviderApi
      *
      * @return \UglyGremlin\Layer\Model\Collection
      */
-    public function getByLastMessage($userId, $limit = 100, $fromId = null)
+    public function getByLastMessage($userId, $limit = null, $fromId = null)
     {
-        list($items, $total) = $this->query($this->path($userId), $limit, $fromId, ['sort_by' => 'last_message']);
+        list($items, $total) = $this->query("users/$userId/conversations", $limit, $fromId, ['sort_by' => 'last_message']);
 
         return Conversation::collection($items, $total);
     }
@@ -60,7 +60,7 @@ class ConversationApi extends AbstractCollectionProviderApi
      */
     public function getOneAsUser($userId, $conversationId)
     {
-        return new Conversation($this->getEntity($this->path($userId, $conversationId)));
+        return new Conversation($this->getEntity("users/$userId/conversations/$conversationId"));
     }
 
     /**
@@ -74,31 +74,6 @@ class ConversationApi extends AbstractCollectionProviderApi
      */
     public function getOneAsSystem($conversationId)
     {
-        return new Conversation($this->getEntity($this->path(null, $conversationId)));
-    }
-
-    /**
-     * Returns the API url path
-     *
-     * @param string|null $userId
-     * @param string|null $conversationId
-     *
-     * @return string
-     */
-    private function path($userId = null, $conversationId = null)
-    {
-        $path = "";
-
-        if ($userId !== null) {
-            $path = "users/$userId/";
-        }
-
-        $path .= "conversations";
-
-        if ($conversationId !== null) {
-            $path .= "/$conversationId";
-        }
-
-        return $path;
+        return new Conversation($this->getEntity("conversations/$conversationId"));
     }
 }

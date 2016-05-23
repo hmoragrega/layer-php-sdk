@@ -18,7 +18,7 @@ use UglyGremlin\Layer\Api\CollectionResponse;
  */
 abstract class AbstractEntity extends \stdClass
 {
-    public function __construct(array $source = [])
+    public function __construct($source = [])
     {
         foreach ($source as $key => $value) {
             $this->{$key} = $this->map($key, $value);
@@ -29,15 +29,15 @@ abstract class AbstractEntity extends \stdClass
      * Creates a collection of
      *
      * @param \stdClass[] $entities
-     * @param int|null    $total
+     * @param int         $total
      *
      * @return Collection
      */
-    public static function collection(array $entities = [], $total = null)
+    public static function collection(array $entities = [], $total = 0)
     {
         $collection = [];
         foreach ($entities as $entity) {
-            $collection[] = new static((array) $entity);
+            $collection[] = new static($entity);
         }
 
         return new Collection($collection, $total);

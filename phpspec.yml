@@ -5,3 +5,4 @@ suites:
 
 extensions:
     - Coduo\PhpSpec\DataProvider\DataProviderExtension
+    - Akeneo\SkipExampleExtension

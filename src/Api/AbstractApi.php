@@ -77,9 +77,14 @@ abstract class AbstractApi
         $this->responseParser    = $responseParser;
     }
 
+    /**
+     * @param $path
+     *
+     * @return array
+     */
     public function getEntity($path)
     {
-        return $this->responseParser->parseObject($this->execute(RequestFactory::GET, $path));
+        return (array) $this->responseParser->parseObject($this->execute(RequestFactory::GET, $path));
     }
 
     /**

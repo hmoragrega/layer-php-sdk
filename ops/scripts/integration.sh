@@ -13,7 +13,7 @@ function dependencies {
 function test {
   for version in 5.4 5.5 5.6; do
     PHP=php-$version
-    $PHP bin/phpspec run $1
+    $PHP bin/phpspec run
   done
 }
 
@@ -27,7 +27,7 @@ function ramsey {
   package=ramsey/uuid
   for version in ^1.0 ^2.0 ^3.0; do
     dependencies $package $version
-    test spec/Uuid/Generator/RamseyUuidGeneratorSpec.php
+    test
   done
 }
 
@@ -35,12 +35,12 @@ function guzzlehttp {
  package=guzzlehttp/guzzle
  for version in ^4.0 ^5.0; do
    dependencies $package $version
-   test spec/Http/Client/GuzzleHttpLegacyAdapterSpec.php
+   test
  done
  
  for version in ^6.0; do
    dependencies $package $version
-   test spec/Http/Client/GuzzleHttpAdapterSpec.php
+   test
  done
 }
 
@@ -48,7 +48,7 @@ function guzzle {
  package=guzzle/guzzle
  for version in ^3.0; do
    dependencies $package $version
-   test spec/Http/Client/GuzzleAdapterSpec.php
+   test
  done
 }
 

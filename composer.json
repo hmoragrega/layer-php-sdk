@@ -12,7 +12,8 @@
     "require-dev": {
         "phpspec/phpspec": "^2.5",
         "escapestudios/symfony2-coding-standard": "~2.0",
-        "coduo/phpspec-data-provider-extension": "^1.0"
+        "coduo/phpspec-data-provider-extension": "^1.0",
+        "akeneo/phpspec-skip-example-extension": "^1.2"
     },
     "autoload": {
         "psr-4": { 

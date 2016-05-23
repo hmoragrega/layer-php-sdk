@@ -16,9 +16,9 @@ use UglyGremlin\Layer\Uuid\UuidGeneratorInterface;
  */
 class ClientSpec extends ObjectBehavior
 {
-    function let(ClientInterface $httpClient, UuidGeneratorInterface $uuidGenerator, Config $config, Logger $logger)
+    function let(Config $config, ClientInterface $httpClient, UuidGeneratorInterface $uuidGenerator, Logger $logger)
     {
-        $this->beConstructedWith($httpClient, $uuidGenerator, $config, $logger);
+        $this->beConstructedWith($config, $httpClient, $uuidGenerator, $logger);
     }
 
     function it_is_initializable()

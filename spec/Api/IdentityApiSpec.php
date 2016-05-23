@@ -26,93 +26,47 @@ class IdentityApiSpec extends AbstractApiSpec
 
     function it_can_get_one_message_as_user_perspective()
     {
-        $this->expectEntity();
-        $this->requestFactory->get(
-            'https://api.layer.com/apps/appId/users/userId/identity',
-            $this->getHeaders()
-        )->willReturn($this->request);
+        $this->responseParser->parseObject($this->exchange)
+            ->willReturn(new \stdClass());
+
+        $this->requestFactory->create('GET', 'users/userId/identity', null)
+            ->willReturn($this->request);
 
         $this->getOne('userId')
             ->shouldReturnAnInstanceOf('UglyGremlin\Layer\Model\Identity');
     }
 
-    /**
-     * @dataProvider createIdentityPayload
-     */
-    function it_can_create_an_identity_from_different_inputs($identity, $payload)
+    function it_can_create_an_identity()
     {
-        $this->requestFactory->post(
-            'https://api.layer.com/apps/appId/users/userId/identity',
-            $this->getHeaders(),
-            $payload
-        )->willReturn($this->request);
+        $this->requestFactory->create('POST', 'users/userId/identity', 'payload')
+            ->willReturn($this->request);
 
-        $this->create('userId', $identity);
+        $this->create('userId', 'payload');
     }
 
-    /**
-     * @dataProvider updateIdentityPayload
-     */
-    function it_can_update_an_identity_from_different_inputs($identity, $payload)
+    function it_can_update_an_identity()
     {
-        $this->requestFactory->patch(
-            'https://api.layer.com/apps/appId/users/userId/identity',
-            $this->getPatchHeaders(),
-            $payload
-        )->willReturn($this->request);
+        $patchOperation = new \stdClass();
 
-        $this->update('userId', $identity);
+        $this->requestFactory->create('PATCH', 'users/userId/identity', [$patchOperation])
+            ->willReturn($this->request);
+
+        $this->update('userId', $patchOperation);
     }
 
-    /**
-     * @dataProvider createIdentityPayload
-     */
-    function it_can_replace_an_identity_from_different_inputs($identity, $payload)
+    function it_can_replace_an_identity()
     {
-        $this->requestFactory->put(
-            'https://api.layer.com/apps/appId/users/userId/identity',
-            $this->getHeaders(),
-            $payload
-        )->willReturn($this->request);
+        $this->requestFactory->create('PUT', 'users/userId/identity', 'payload')
+            ->willReturn($this->request);
 
-        $this->replace('userId', $identity);
+        $this->replace('userId', 'payload');
     }
 
-    function it_can_remove_an_identity_from_different_inputs()
+    function it_can_remove_an_identity()
     {
-        $this->requestFactory->delete(
-            'https://api.layer.com/apps/appId/users/userId/identity',
-            $this->getHeaders()
-        )->willReturn($this->request);
+        $this->requestFactory->create('DELETE', 'users/userId/identity', null)
+            ->willReturn($this->request);
 
         $this->remove('userId');
-    }
-
-    function createIdentityPayload()
-    {
-        $identity = new \stdClass();
-        $identity->foo = 'bar';
-
-        $payload = json_encode(['foo' => 'bar']);
-
-        return [
-            [['foo' => 'bar'], json_encode(['foo' => 'bar'])],  // From array
-            [$identity, $payload],                              // From stdClass
-            [$payload, $payload]                                // From string
-        ];
-    }
-
-    function updateIdentityPayload()
-    {
-        $identity = new \stdClass();
-        $identity->foo = 'bar';
-
-        $payload = json_encode(['foo' => 'bar']);
-
-        return [
-            [['foo' => 'bar'], json_encode(['foo' => 'bar'])],  // From array
-            [$identity, json_encode([$identity])],              // From stdClass
-            [$payload, $payload]                                // From string
-        ];
     }
 }

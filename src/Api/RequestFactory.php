@@ -44,7 +44,7 @@ class RequestFactory
      */
     public function __construct(Config $config, UuidGeneratorInterface $uuidGenerator)
     {
-        $this->config = $config;
+        $this->config        = $config;
         $this->uuidGenerator = $uuidGenerator;
     }
 

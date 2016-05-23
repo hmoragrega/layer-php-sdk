@@ -9,6 +9,7 @@
 
 namespace UglyGremlin\Layer\Api;
 
+use Psr\Http\Message\RequestInterface;
 use UglyGremlin\Layer\Exception\BadRequestException;
 use UglyGremlin\Layer\Exception\ConflictException;
 use UglyGremlin\Layer\Exception\NotFoundException;
@@ -84,13 +85,15 @@ class ResponseValidator
      */
     private function throwResponseException(Exchange $exchange, $statusCode)
     {
-        $error = new Error((array) $this->parser->parseObject($exchange));
+        $error    = new Error($this->parser->parseObject($exchange));
+        $request  = $exchange->getRequest();
+        $response = $exchange->getResponse();
 
         if (isset($this->exceptionMap[$statusCode])) {
-            $exception = new $this->exceptionMap[$statusCode];
-            throw new $exception($exchange, $error->message, $error->code);
+            $exception = $this->exceptionMap[$statusCode];
+            throw new $exception($request, $response, $error->message, $error->code);
         }
 
-        throw new ResponseException($exchange, $error->message, $error->code);
+        throw new ResponseException($request, $response, $error->message, $error->code);
     }
 }

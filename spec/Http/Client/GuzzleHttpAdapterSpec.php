@@ -12,6 +12,7 @@ namespace spec\UglyGremlin\Layer\Http\Client;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
+use PhpSpec\Exception\Example\SkippingException;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Psr\Http\Message\RequestInterface;
@@ -22,12 +23,17 @@ use UglyGremlin\Layer\Exception\RequestException;
  * Class GuzzleHttpAdapterSpec
  *
  * @package spec\UglyGremlin\Layer\Http\Client
+ * @require \GuzzleHttp\Client
  * @mixin \UglyGremlin\Layer\Http\Client\GuzzleHttpAdapter
  */
 class GuzzleHttpAdapterSpec extends ObjectBehavior
 {
     function let(Client $client)
     {
+        if (!method_exists('GuzzleHttp\Client', 'request')) {
+            throw new SkippingException('The required dependency is not installed');
+        }
+
         $this->beConstructedWith($client);
     }
 

@@ -28,7 +28,7 @@ class MessageApi extends AbstractCollectionProviderApi
      */
     public function getByConversationAsUser($userId, $conversationId, $limit = null, $fromId = null)
     {
-        list($items, $total) = $this->query($this->path($userId, $conversationId), $limit, $fromId);
+        list($items, $total) = $this->query("users/$userId/conversations/$conversationId/messages", $limit, $fromId);
 
         return Message::collection($items, $total);
     }
@@ -42,7 +42,7 @@ class MessageApi extends AbstractCollectionProviderApi
      */
     public function getByConversationAsSystem($conversationId, $limit = null, $fromId = null)
     {
-        list($items, $total) = $this->query($this->path(null, $conversationId), $limit, $fromId);
+        list($items, $total) = $this->query("conversations/$conversationId/messages", $limit, $fromId);
 
         return Message::collection($items, $total);
     }
@@ -55,7 +55,7 @@ class MessageApi extends AbstractCollectionProviderApi
      */
     public function getOneAsUser($userId, $messageId)
     {
-        return new Message((array) $this->getEntity($this->path($userId, null, $messageId)));
+        return new Message($this->getEntity("users/$userId/messages/$messageId"));
     }
 
     /**
@@ -66,36 +66,6 @@ class MessageApi extends AbstractCollectionProviderApi
      */
     public function getOneAsSystem($conversationId, $messageId)
     {
-        return new Message((array) $this->getEntity($this->path(null, $conversationId, $messageId)));
-    }
-
-    /**
-     * Returns the API url path
-     *
-     * @param string|null $userId
-     * @param string|null $conversationId
-     * @param string|null $messageId
-     *
-     * @return string
-     */
-    private function path($userId = null, $conversationId = null, $messageId = null)
-    {
-        $path = "";
-
-        if ($userId !== null) {
-            $path = "users/$userId/";
-        }
-
-        if ($conversationId !== null) {
-            $path .= "conversations/$conversationId/";
-        }
-
-        $path .= "messages";
-
-        if ($messageId !== null) {
-            $path .= "/$messageId";
-        }
-
-        return $path;
+        return new Message($this->getEntity("conversations/$conversationId/messages/$messageId"));
     }
 }

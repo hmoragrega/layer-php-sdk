@@ -13,13 +13,13 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use UglyGremlin\Layer\Api\CollectionResponse;
-use UglyGremlin\Layer\Api\Config;
+use UglyGremlin\Layer\Api\RequestFactory;
 use UglyGremlin\Layer\Api\ResponseChecker;
+use UglyGremlin\Layer\Api\ResponseParser;
+use UglyGremlin\Layer\Api\ResponseValidator;
 use UglyGremlin\Layer\Http\ClientInterface;
-use UglyGremlin\Layer\Http\RequestFactory;
+use UglyGremlin\Layer\Http\Exchange;
 use UglyGremlin\Layer\Log\Logger;
-use UglyGremlin\Layer\Uuid\UuidGeneratorInterface;
 
 /**
  * Class AbstractApiSpec
@@ -63,68 +63,48 @@ abstract class AbstractApiSpec extends ObjectBehavior
      */
     protected $collectionResponse;
 
+    /**
+     * @var ResponseValidator
+     */
+    protected $responseValidator;
+
+    /**
+     * @var ResponseParser
+     */
+    protected $responseParser;
+
+    /**
+     * @var Exchange
+     */
+    protected $exchange;
+
     function let(
         ClientInterface $httpClient,
         RequestFactory $requestFactory,
-        ResponseChecker $checker,
-        UuidGeneratorInterface $uuidGenerator,
+        ResponseValidator $responseValidator,
+        ResponseParser $responseParser,
         Logger $logger,
         RequestInterface $request,
-        ResponseInterface $response,
-        CollectionResponse $collectionResponse
+        ResponseInterface $response
     ) {
-        $config = new Config('appId', 'appToken');
-        $uuidGenerator->getUniqueId()->willReturn('uuid');
-
-        $this->httpClient     = $httpClient;
-        $this->checker        = $checker;
-        $this->requestFactory = $requestFactory;
-        $this->logger         = $logger;
-        $this->request        = $request;
-        $this->response       = $response;
-        $this->collectionResponse = $collectionResponse;
-        $this->collectionResponse->getList()->willReturn([1, 2, 3]);
-        $this->collectionResponse->getTotal()->willReturn(100);
+        $this->httpClient        = $httpClient;
+        $this->requestFactory    = $requestFactory;
+        $this->responseValidator = $responseValidator;
+        $this->responseParser    = $responseParser;
+        $this->logger            = $logger;
+        $this->request           = $request;
+        $this->response          = $response;
+        $this->exchange          = new Exchange($request->getWrappedObject(), $response->getWrappedObject());
 
         $this->httpClient->execute($request)->willReturn($response);
-        $this->httpClient->execute($request)->willReturn($response);
-        $this->checker->validate($request, $response)->willReturn($response);
+        $this->responseValidator->validate($this->exchange)->willReturn($this->exchange);
 
-        $this->beConstructedWith($httpClient, $checker, $uuidGenerator, $requestFactory, $config, $logger);
+        $this->beConstructedWith($httpClient, $requestFactory, $responseValidator, $responseParser, $logger);
     }
 
     protected function expectCollection()
     {
         $this->checker->parseCollection($this->request, $this->response)
             ->willReturn($this->collectionResponse);
-    }
-
-    protected function expectEntity()
-    {
-        $this->checker->parseEntity($this->request, $this->response)
-            ->willReturn($this->collectionResponse);
-    }
-
-    protected function getHeaders()
-    {
-        return [
-            'Accept'        => 'application/vnd.layer+json; version=1.1',
-            'Authorization' => 'Bearer appToken',
-            'Content-Type'  => 'application/json',
-            'User-Agent'    => 'UglyGremlin\'s Layer PHP SDK. 1.0.0',
-            'If-None-Match' => 'uuid',
-        ];
-    }
-
-    protected function getPatchHeaders()
-    {
-        return [
-            'Accept'                 => 'application/vnd.layer+json; version=1.1',
-            'Authorization'          => 'Bearer appToken',
-            'Content-Type'           => 'application/vnd.layer-patch+json',
-            'User-Agent'             => 'UglyGremlin\'s Layer PHP SDK. 1.0.0',
-            'If-None-Match'          => 'uuid',
-            'X-HTTP-Method-Override' => 'PATCH',
-        ];
     }
 }

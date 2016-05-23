@@ -9,6 +9,7 @@
 
 namespace spec\UglyGremlin\Layer\Uuid\Generator;
 
+use PhpSpec\Exception\Example\SkippingException;
 use PhpSpec\ObjectBehavior;
 
 /**
@@ -19,6 +20,13 @@ use PhpSpec\ObjectBehavior;
  */
 class RamseyUuidGeneratorSpec extends ObjectBehavior
 {
+    function let()
+    {
+        if (!class_exists('Ramsey\Uuid\Uuid') && !class_exists('Rhumsaa\Uuid\Uuid')) {
+            throw new SkippingException('The required dependency is not installed');
+        }
+    }
+
     function it_is_initializable()
     {
         $this->shouldHaveType('UglyGremlin\Layer\Uuid\Generator\RamseyUuidGenerator');
