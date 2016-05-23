@@ -26,6 +26,7 @@ use UglyGremlin\Layer\Exception\RequestException;
  *
  * @package spec\UglyGremlin\Layer\Http\Client
  * @require \GuzzleHttp\Client
+ * @require \GuzzleHttp\Message\ResponseInterface
  * @mixin \UglyGremlin\Layer\Http\Client\GuzzleHttpLegacyAdapter
  */
 class GuzzleHttpLegacyAdapterSpec extends ObjectBehavior
